@@ -1,0 +1,47 @@
+﻿@page "/emailreport"
+@inject ReqResponse.Blazor.Services.IRequestService service
+@inject NavigationManager navigationManager
+
+
+@if (string.IsNullOrWhiteSpace(errorString) == false)
+{
+    <div class="h2">@errorString</div>
+}
+else if (report is null)
+{
+    <div class="h4">Loading...</div>
+}
+else
+{
+
+    <h3>Email Report</h3>
+    <h2>Error Count             = @report.ErrorCount.ToString()</h2>
+    <h2>Error Set Count         = @report.ErrorSet.ToString()</h2>
+    <h2>Current Last Error Time = @report.CurrentLastErrorDateTime.ToString()</h2>
+    <h2>Last Error Time         = @report.LastErrorDateTime.ToString()</h2>
+    <h2>Created Time            = @report.Created.ToString()</h2>
+
+    @if (report.ErrorCount > 0)
+    {
+        <button class="btn btn-primary" type="button" @onclick="OnReport">@report.Message</button>
+    }
+}
+
+@code {
+    TestErrorReport report = null;
+    string errorString = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Task.Yield();
+        report = await service.GetTestErrorReport();
+        errorString = service.ErrorString;
+
+    }
+
+    private async Task OnReport()
+    {
+        await service.EmailTestErrorReport();
+        navigationManager.NavigateTo("/");
+    }
+}

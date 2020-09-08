@@ -1,0 +1,33 @@
+﻿@page "/summarylist"
+
+@inject ReqResponse.Blazor.Services.IRequestService service
+
+<h3>Summary List</h3>
+
+@if (string.IsNullOrWhiteSpace(errorString) == false)
+{
+    <div class="h2">@errorString</div>
+}
+else if (responses is null)
+{
+    <div class="h4">Loading...</div>
+}
+else
+{
+  
+            @foreach (var response in responses)
+            {
+                    <Summary ResponseSetId="@response.ResponseSetId"></Summary>
+            }
+   
+}
+
+@code {
+    List<ResponseSummaryModel> responses = null;
+    string errorString = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+        responses = await service.GetAllSummaryModels();
+    }
+}

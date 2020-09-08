@@ -1,0 +1,126 @@
+﻿@page "/remoterequests"
+
+@inject ReqResponse.Blazor.Services.IRequestService service
+
+@if (string.IsNullOrWhiteSpace(messageString) == false)
+{
+    <h3>Remote Requests @messageString</h3>
+}
+else
+{
+    <h3>Remote Requests Started</h3>
+}
+
+@if (string.IsNullOrWhiteSpace(errorString) == false)
+{
+    <div class="h2">@errorString</div>
+}
+else if (responses is null)
+{
+    <div class="h4">Loading...</div>
+}
+else
+{
+    <table class="table table-striped">
+        <thead class="thead-dark">
+            <tr>
+                <th>Id</th>
+                <td>Created</td>
+                <td>Success</td>
+                <td>ResponseSetId</td>
+                <td>RequestId</td>
+                <th>Method</th>
+                <th>Value1</th>
+                <th>Value2</th>
+                <th>Value</th>
+                <th>Actual Value</th>
+                <th>Expected Result</th>
+                <th>Actual Result</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var response in responses)
+            {
+            <tr>
+                <th>@response.Id.ToString()</th>
+                <th>@response.Created.ToString()</th>
+                <th>@response.Success.ToString()</th>
+                <th>@response.ResponseSetId.ToString()</th>
+                <th>@response.Request.Id.ToString()</th>
+                <th>@response.Request.Method</th>
+                <th>@response.Request.Value1</th>
+                <th>@response.Request.Value2</th>
+                <th>@response.Request.ExpectedValue</th>
+                <th>@response.ActualValue</th>
+                <th>@response.Request.ExpectedResult.ToString()</th>
+                <th>@response.ActualResult.ToString()</th>
+            </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+        List<TestResponse> responses = null;
+        string errorString = "";
+        string messageString = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+        bool working = true;
+        await Task.Yield();
+        responses = await service.ProcessRequest(true, true, 9999);
+        errorString = service.ErrorString;
+        service.RefreshRequested += RefreshMe;
+
+        MakeMessageString(!service.IsNeedRequest());
+
+        while (working)
+        {
+            working = service.IsNeedRequest();
+            await UpdateResponseAsync();
+            errorString = service.ErrorString;
+        }
+        await service.Reset(true);
+    }
+
+    public async Task UpdateResponseAsync()
+    {
+        if (service.IsNeedRequest())
+        {
+            await Task.Yield();
+            List<TestResponse> newResponses = await service.ProcessRequest(false, true, 9999);
+            foreach (TestResponse resp in newResponses)
+                responses.Add(resp);
+
+            MakeMessageString(false);
+            await Task.Delay(500);
+        }
+        else
+        {
+            MakeMessageString(true);
+            await Task.Yield();
+            StateHasChanged();
+
+        }
+    }
+
+    private void MakeMessageString(bool finish)
+    {
+        int count = responses.Count;
+        int max = service.MaxRequests;
+        if (count > max)
+            max = count;
+
+        if (finish)
+            messageString = "Finish Processing " + max.ToString() + " Requests";
+        else
+            messageString = "Processing " + count.ToString() + " of " + max.ToString() + " Requests";
+
+    }
+
+    private void RefreshMe()
+    {
+        StateHasChanged();
+    }
+}
