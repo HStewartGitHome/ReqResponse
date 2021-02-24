@@ -46,7 +46,6 @@ namespace ReqResponse.Services
             Result_Options result = Result_Options.Unknown;
             string xmlResponse = "";
             Request request;
-            Response response = null;
             bool exceptionHappen = false;
 
             // first deserialize xmlRequest
@@ -54,13 +53,14 @@ namespace ReqResponse.Services
             {
                 request = (Request)XmlHelper.DeserializeObject<Request>(xmlRequest);
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 result = Result_Options.ExceptionParsingRequest;
                 request = null;
                 exceptionHappen = true;
             }
 
+            Response response;
             if (request != null)
             {
                 // execute the request  and get response
@@ -68,7 +68,7 @@ namespace ReqResponse.Services
                 {
                     response = ExecuteRequest(request);
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
                     response = null;
                     result = Result_Options.Exception;
@@ -91,7 +91,7 @@ namespace ReqResponse.Services
                     {
                         xmlResponse = (string)XmlHelper.SerializeObject<Response>(typeof(Response), response);
                     }
-                    catch (Exception e)
+                    catch (Exception)
                     {
                         result = Result_Options.ExceptionParseResponse;
                         xmlResponse = "";
@@ -111,7 +111,7 @@ namespace ReqResponse.Services
                 {
                     xmlResponse = (string)XmlHelper.SerializeObject<Response>(typeof(Response), response);
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
                     result = Result_Options.ExceptionParseResponse;
                 }

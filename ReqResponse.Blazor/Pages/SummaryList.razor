@@ -6,28 +6,24 @@
 
 @if (string.IsNullOrWhiteSpace(errorString) == false)
 {
-    <div class="h2">@errorString</div>
-}
-else if (responses is null)
-{
-    <div class="h4">Loading...</div>
-}
-else
-{
-  
-            @foreach (var response in responses)
+<div class="h2">@errorString</div> }
+            else if (responses is null)
             {
-                    <Summary ResponseSetId="@response.ResponseSetId"></Summary>
-            }
-   
-}
+<div class="h4">Loading...</div> }
+            else
+            {
 
-@code {
-    List<ResponseSummaryModel> responses = null;
-    string errorString = "";
-
-    protected override async Task OnInitializedAsync()
-    {
-        responses = await service.GetAllSummaryModels();
+                <Virtualize Items="responses" Context="response">
+                        <Summary ResponseSetId="@response.ResponseSetId"></Summary>
+                </Virtualize>
     }
-}
+
+    }
+
+    @code { List<ResponseSummaryModel> responses = null;
+                    string errorString = "";
+
+            protected override async Task OnInitializedAsync()
+                {
+                    responses = await service.GetAllSummaryModels();
+                } }

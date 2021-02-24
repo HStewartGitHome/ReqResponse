@@ -31,8 +31,8 @@ namespace ReqResponse.Blazor
             services.AddServerSideBlazor();
 
             var emailConfig = Configuration
-                                .GetSection("EmailConfiguration")
-                                .Get<EmailConfiguration>();
+                         .GetSection("EmailConfiguration")
+                         .Get<EmailConfiguration>();
             services.AddSingleton(emailConfig);
 
             services.AddScoped<ISqlDataAccess, SqlDataAccess>();

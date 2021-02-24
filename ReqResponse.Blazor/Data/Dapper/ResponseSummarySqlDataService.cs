@@ -11,8 +11,8 @@ namespace ReqResponse.Blazor.Data.Dapper
 {
     public class ResponseSummarySqlDataService : IResponseSummaryDataService
     {
-        private ISqlDataAccess _dataAccess = null;
-        private ILogger<ResponseSummarySqlDataService> _logger = null;
+        private readonly ISqlDataAccess _dataAccess = null;
+        private readonly ILogger<ResponseSummarySqlDataService> _logger = null;
 
         public string ErrorMessage { get; set; }
 

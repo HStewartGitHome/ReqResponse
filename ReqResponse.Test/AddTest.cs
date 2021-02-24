@@ -22,7 +22,7 @@ namespace ReqResponse.Test
             if (service.IsConnectedService)
                 Assert.AreNotEqual(Result_Options.FailedConnection, response.Result, "Result should not be Fail Connection");
             Assert.AreEqual(Result_Options.Ok, response.Result, "Result should be Ok");
-            Assert.AreEqual(result, response.ResultValue, "Result value should be " + result + " and got " + response.ResultValue);
+            Assert.AreEqual(result, response.ResultValue, $"Result value should be {result} and got {response.ResultValue}");
         }
 
         public static void TestFailXml(IService service,
@@ -39,7 +39,7 @@ namespace ReqResponse.Test
 
             if (service.IsConnectedService)
                 Assert.AreNotEqual(Result_Options.FailedConnection, response.Result, "Result should not be Fail Connection");
-            Assert.AreNotEqual(Result_Options.Ok, response.Result, "Result should not be Ok");
+            Assert.AreNotEqual(Result_Options.Ok, response.Result, $"Result should not be Ok with Result={response.Result} and Expected {result}");
         }
     }
 }

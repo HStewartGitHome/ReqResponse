@@ -9,7 +9,7 @@ namespace ReqResponse.Blazor.Data.Sim
     public class ResponseSimDataService : IResponseDataService
     {
         private List<ResponseDataModel> _responses = null;
-        private ILogger<ResponseSimDataService> _logger = null;
+        private readonly ILogger<ResponseSimDataService> _logger = null;
 
         #region constructor
 

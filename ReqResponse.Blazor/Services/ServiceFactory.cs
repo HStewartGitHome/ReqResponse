@@ -1,6 +1,4 @@
-﻿using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
-using ReqResponse.Blazor.Models;
+﻿using ReqResponse.Blazor.Models;
 using ReqResponse.Blazor.Services.Email;
 using ReqResponse.Blazor.Services.XmlAPI;
 
@@ -8,24 +6,18 @@ namespace ReqResponse.Blazor.Services
 {
     public class ServiceFactory : IServiceFactory
     {
-        private IConfiguration _configuration = null;
-        private ILogger<ServiceFactory> _logger = null;
-        private IXmlService _localService = null;
-        private IXmlService _connectedService = null;
-        private IEmailService _emailService = null;
-        private EmailConfiguration _emailConfiguration = null;
+        private readonly IXmlService _localService = null;
+        private readonly IXmlService _connectedService = null;
+        private readonly IEmailService _emailService = null;
+        private readonly EmailConfiguration _emailConfiguration = null;
 
         #region constructor
 
-        public ServiceFactory(IConfiguration configuration,
-                              ILogger<ServiceFactory> logger,
-                              LocalXmlService localService,
+        public ServiceFactory(LocalXmlService localService,
                               ConnectedXmlService connectedService,
                               EmailService emailService,
                               EmailConfiguration emailConfiguration)
         {
-            _configuration = configuration;
-            _logger = logger;
             _localService = localService;
             _connectedService = connectedService;
             _emailService = emailService;

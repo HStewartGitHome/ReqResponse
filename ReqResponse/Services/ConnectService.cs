@@ -47,14 +47,13 @@ namespace ReqResponse.Services
         {
             Result_Options result = Result_Options.Unknown;
             Request request;
-            string xmlResponse = "";
 
             // first deserialize xmlRequest
             try
             {
                 request = (Request)XmlHelper.DeserializeObject<Request>(xmlRequest);
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 result = Result_Options.ExceptionParsingRequest;
                 request = null;
@@ -67,7 +66,7 @@ namespace ReqResponse.Services
 
                 return CreateNullResponse(result);
             }
-            else if (Client.SendOldRequest(xmlRequest, "localhost", 11000) == true)
+            else if (Client.SendRequest(xmlRequest, "localhost", 11000) == true)
                 return Client.XmlResult;
             else
                 return CreateNullResponse(Result_Options.FailedConnection);
@@ -87,7 +86,7 @@ namespace ReqResponse.Services
             {
                 xmlResponse = (string)XmlHelper.SerializeObject<Response>(typeof(Response), response);
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 LastResult = Result_Options.ExceptionParseResponse;
             }

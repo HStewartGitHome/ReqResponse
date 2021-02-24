@@ -6,39 +6,33 @@
 
 @if (string.IsNullOrWhiteSpace(errorString) == false)
 {
-    <div class="h2">@errorString</div>
-}
-else if (idList is null)
-{
-    <div class="h4">Loading...</div>
-}
-else
-{
-
-    @foreach (var id in idList)
-    {
-         <FailedList ResponseSetId="@id"></FailedList>
-    }
-
-}
-
-@code {
-        List<ResponseSummaryModel> responses = null;
-        List<int> idList = null;
-        string errorString = "";
-
-    protected override async Task OnInitializedAsync()
-    {
-        responses = await service.GetAllSummaryModels();
-        if (responses != null)
-        {
-            idList = new List<int>();
-            foreach(ResponseSummaryModel model in responses)
+<div class="h2">@errorString</div> }
+            else if (idList is null)
             {
-                if (model.FailedCount > 0)
-                    idList.Add(model.ResponseSetId);
+<div class="h4">Loading...</div> }
+            else
+            {
+                <Virtualize Items="idList" Context="id">
+                    <FailedList ResponseSetId="@id"></FailedList>
+                </Virtualize>
+
             }
-            responses = null;
-        }
-    }
-}
+
+    @code { List<ResponseSummaryModel> responses = null;
+                    List<int> idList = null;
+                    string errorString = "";
+
+            protected override async Task OnInitializedAsync()
+                {
+                    responses = await service.GetAllSummaryModels();
+                    if (responses != null)
+                    {
+                        idList = new List<int>();
+                        foreach (ResponseSummaryModel model in responses)
+                        {
+                            if (model.FailedCount > 0)
+                                idList.Add(model.ResponseSetId);
+                        }
+                        responses = null;
+                    }
+                } }

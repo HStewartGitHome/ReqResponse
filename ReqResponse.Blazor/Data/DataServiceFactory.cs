@@ -8,28 +8,24 @@ namespace ReqResponse.Blazor.Data
 {
     public class DataServiceFactory : IDataServiceFactory
     {
-        private IConfiguration _configuration = null;
-        private IRequestDataService _simRequestDataService = null;
-        private IRequestDataService _sqlRequestDataService = null;
-        private IResponseDataService _simResponseDataService = null;
-        private IResponseDataService _sqlResponseDataService = null;
-        private IResponseSummaryDataService _simResponseSummaryDataService = null;
-        private IResponseSummaryDataService _sqlResponseSummaryDataService = null;
-        private ILogger<DataServiceFactory> _logger = null;
+     
+        private readonly IRequestDataService _simRequestDataService = null;
+        private readonly IRequestDataService _sqlRequestDataService = null;
+        private readonly IResponseDataService _simResponseDataService = null;
+        private readonly IResponseDataService _sqlResponseDataService = null;
+        private readonly IResponseSummaryDataService _simResponseSummaryDataService = null;
+        private readonly IResponseSummaryDataService _sqlResponseSummaryDataService = null;
+       
 
         #region Constructor
 
-        public DataServiceFactory(IConfiguration configuration,
-                                ILogger<DataServiceFactory> logger,
-                                RequestSimDataService simRequestDataService,
+        public DataServiceFactory(RequestSimDataService simRequestDataService,
                                 RequestSqlDataService sqlRequestDataService,
                                 ResponseSimDataService simResponseDataService,
                                 ResponseSqlDataService sqlResponseDataService,
                                 ResponseSummarySimDataService simResponseSummaryDataService,
                                 ResponseSummarySqlDataService sqlResponseSummaryDataService)
         {
-            _configuration = configuration;
-            _logger = logger;
             _simRequestDataService = simRequestDataService;
             _sqlRequestDataService = sqlRequestDataService;
             _simResponseDataService = simResponseDataService;

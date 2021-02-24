@@ -12,16 +12,13 @@ namespace ReqResponse.Blazor.Services.Email
 {
     public class EmailService : IEmailService
     {
-        IConfiguration _configuration = null;
-        ILogger<EmailService> _logger = null;
-        EmailConfiguration _emailConfiguration = null;
+        readonly ILogger<EmailService> _logger = null;
+        readonly EmailConfiguration _emailConfiguration = null;
 
         #region Constructor
-        public EmailService(IConfiguration configuration,
-                            EmailConfiguration emailConfiguration,
+        public EmailService( EmailConfiguration emailConfiguration,
                             ILogger<EmailService> logger)
         {
-            _configuration = configuration;
             _emailConfiguration = emailConfiguration;
             _logger = logger;
         }
@@ -62,20 +59,17 @@ namespace ReqResponse.Blazor.Services.Email
                         Text = emailData
                     };
 
-                    using (var client = new MailKit.Net.Smtp.SmtpClient())
-                    {
+                using var client = new MailKit.Net.Smtp.SmtpClient();
+                client.Connect(config.SmtpServer, config.Port, false);
 
-                        client.Connect(config.SmtpServer, config.Port, false);
+                //SMTP server authentication if needed
+                client.Authenticate(config.UserName, config.Password);
 
-                        //SMTP server authentication if needed
-                        client.Authenticate(config.UserName, config.Password);
+                client.Send(message);
 
-                        client.Send(message);
+                client.Disconnect(true);
 
-                        client.Disconnect(true);
-                    }
-
-                }
+            }
                 catch (Exception ex)
                 {
                     Trace.TraceError(ex.Message);

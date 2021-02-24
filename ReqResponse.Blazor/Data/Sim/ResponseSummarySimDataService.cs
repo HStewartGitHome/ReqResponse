@@ -8,7 +8,7 @@ namespace ReqResponse.Blazor.Data.Sim
     public class ResponseSummarySimDataService : IResponseSummaryDataService
     {
         private List<ResponseSummaryModel> _summaryModels = null;
-        private ILogger<ResponseSummarySimDataService> _logger = null;
+        private readonly ILogger<ResponseSummarySimDataService> _logger = null;
 
         public string ErrorMessage { get; set; }
 

@@ -21,10 +21,10 @@ namespace ReqResponse.Blazor.Services
     public class RequestService : IRequestService
     {
         #region Private Variables
-        private IConfiguration _configuration = null;
-        private IDataServiceFactory _dataFactory = null;
-        private IServiceFactory _serviceFactory = null;
-        private Options _options = null;
+        private readonly IConfiguration _configuration = null;
+        private readonly IDataServiceFactory _dataFactory = null;
+        private readonly IServiceFactory _serviceFactory = null;
+        private readonly Options _options = null;
         #endregion
 
         #region Public Variables
@@ -134,11 +134,10 @@ namespace ReqResponse.Blazor.Services
         #region Public GetReponseSummaryModelBySetId
         public async Task<ResponseSummaryModel> GetReponseSummaryModelBySetId(int setId)
         {
-            ResponseSummaryModel model = null;
             List<ResponseSummaryModel> models = null;
 
             await InitializeServices();
-            model = await SimResponseSummaryDataService.GetByResponseSetId(setId);
+            ResponseSummaryModel model = await SimResponseSummaryDataService.GetByResponseSetId(setId);
             if (model == null)
                 models = await GetAllSummaryModels();
             if (models != null)
@@ -152,11 +151,10 @@ namespace ReqResponse.Blazor.Services
         public async Task<List<TestResponse>> GetFailedResponsesForSet(int setId)
         {
             List<TestResponse> responses = null;
-            List<ResponseDataModel> models = null;
             await LoadIfNeedResponses();
             await LoadIfNeedResponseSummary();
 
-            models = await SimResponseDataService.GetAll();
+            List<ResponseDataModel> models = await SimResponseDataService.GetAll();
             foreach (ResponseDataModel model in models)
             {
                 if ((model.ResponseSetId == setId) && (model.Success == false))
@@ -214,11 +212,10 @@ namespace ReqResponse.Blazor.Services
         public async Task<TestErrorReport> GetTestErrorReport()
         {
             TestErrorReport report = new TestErrorReport();
-            List<ResponseSummaryModel> models = null;
             await LoadIfNeedResponseSummary();
 
             report.CurrentLastErrorDateTime = GetLastEmailDateTime();
-            models = await SimResponseSummaryDataService.GetAll();
+            List<ResponseSummaryModel> models = await SimResponseSummaryDataService.GetAll();
             DateTime LastTime = report.CurrentLastErrorDateTime;
             foreach (ResponseSummaryModel model in models)
             {
@@ -240,13 +237,12 @@ namespace ReqResponse.Blazor.Services
         public async Task EmailTestErrorReport()
         {
             TestErrorReport report = new TestErrorReport();
-            List<ResponseSummaryModel> models = null;
             List<ResponseSummaryModel> errorModels = new List<ResponseSummaryModel>();
             await LoadIfNeedResponseSummary();
             await LoadIfNeedResponses();
 
             report.CurrentLastErrorDateTime = GetLastEmailDateTime();
-            models = await SimResponseSummaryDataService.GetAll();
+            List<ResponseSummaryModel> models = await SimResponseSummaryDataService.GetAll();
             DateTime LastTime = report.CurrentLastErrorDateTime;
             foreach (ResponseSummaryModel model in models)
             {
@@ -333,10 +329,12 @@ namespace ReqResponse.Blazor.Services
                                                         bool remoteRequest)
         {
             IXmlService service;
-            TestResponse response = new TestResponse();
-            response.Request = request;
-            response.Success = false;
-            response.RequestId = request.Id;
+            TestResponse response = new TestResponse
+            {
+                Request = request,
+                Success = false,
+                RequestId = request.Id
+            };
 
             if (remoteRequest)
                 service = _serviceFactory.GetConnectedService();
@@ -464,13 +462,15 @@ namespace ReqResponse.Blazor.Services
         {
             List<TestRequest> requests = await SimRequestDataService.GetAll();
             TestRequest request = null;
-            TestResponse response = new TestResponse();
-            response.Id = model.Id;
-            response.Created = model.Created;
-            response.ResponseSetId = model.ResponseSetId;
-            response.Success = model.Success;
-            response.ActualResult = model.ActualResult;
-            response.ActualValue = model.ActualValue;
+            TestResponse response = new TestResponse
+            {
+                Id = model.Id,
+                Created = model.Created,
+                ResponseSetId = model.ResponseSetId,
+                Success = model.Success,
+                ActualResult = model.ActualResult,
+                ActualValue = model.ActualValue
+            };
 
             foreach (TestRequest req in requests)
             {
@@ -553,9 +553,8 @@ namespace ReqResponse.Blazor.Services
 
         private DateTime GetLastEmailDateTime()
         {
-            DateTime time;
             string str = _configuration.GetValue<string>("LastEmailDateTime");
-            if (DateTime.TryParse(str, out time) == false)
+            if (DateTime.TryParse(str, out DateTime time) == false)
                 time = DateTime.Now;
 
             return time;

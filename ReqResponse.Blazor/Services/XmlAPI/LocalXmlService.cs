@@ -7,24 +7,18 @@ namespace ReqResponse.Blazor.Services.XmlAPI
 {
     public class LocalXmlService : IXmlService
     {
-        private IConfiguration _configuration = null;
-        private ILogger<LocalXmlService> _logger = null;
+  
         private IService _service = null;
 
-        public LocalXmlService(IConfiguration configuration,
-                                ILogger<LocalXmlService> logger)
+        public LocalXmlService()
         {
-            _configuration = configuration;
-            _logger = logger;
+
             _service = new Service();
         }
 
         public async Task<string> ExecuteRequest(string request)
         {
-            string result = "";
-
-            result = _service.ExecuteXMLRequest(request);
-
+            string result = _service.ExecuteXMLRequest(request);
             await Task.Delay(0);
             return result;
         }

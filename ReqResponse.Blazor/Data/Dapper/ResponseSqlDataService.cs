@@ -10,8 +10,8 @@ namespace ReqResponse.Blazor.Data.Dapper
 {
     public class ResponseSqlDataService : IResponseDataService
     {
-        private ISqlDataAccess _dataAccess = null;
-        private ILogger<ResponseSqlDataService> _logger = null;
+        private readonly ISqlDataAccess _dataAccess = null;
+        private readonly ILogger<ResponseSqlDataService> _logger = null;
 
         #region constructor
 

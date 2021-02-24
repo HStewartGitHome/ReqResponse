@@ -39,23 +39,22 @@ else
             </tr>
         </thead>
         <tbody>
-            @foreach (var response in responses)
-            {
+            <Virtualize Items="responses" Context="response">
             <tr>
-                <th>@response.Id.ToString()</th>
-                <th>@response.Created.ToString()</th>
-                <th>@response.Success.ToString()</th>
-                <th>@response.ResponseSetId.ToString()</th>
-                <th>@response.Request.Id.ToString()</th>
-                <th>@response.Request.Method</th>
-                <th>@response.Request.Value1</th>
-                <th>@response.Request.Value2</th>
-                <th>@response.ActualValue</th>
-                <th>@response.Request.ExpectedValue</th>
-                <th>@response.Request.ExpectedResult.ToString()</th>
-                <th>@response.ActualResult.ToString()</th>
-            </tr>
-            }
+            <th>@response.Id.ToString()</th>
+            <th>@response.Created.ToString()</th>
+            <th>@response.Success.ToString()</th>
+            <th>@response.ResponseSetId.ToString()</th>
+            <th>@response.Request.Id.ToString()</th>
+            <th>@response.Request.Method</th>
+            <th>@response.Request.Value1</th>
+            <th>@response.Request.Value2</th>
+            <th>@response.ActualValue</th>
+            <th>@response.Request.ExpectedValue</th>
+            <th>@response.Request.ExpectedResult.ToString()</th>
+            <th>@response.ActualResult.ToString()</th>
+        </tr>
+        </Virtualize>
         </tbody>
     </table>
 }

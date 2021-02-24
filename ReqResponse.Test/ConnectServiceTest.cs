@@ -159,8 +159,8 @@ namespace ReqResponse.Test
 
         private IService GetService()
         {
-            IService service = null;
             Options options = new Options();
+            IService service;
             if (options.TestOption == Test_Options.UnitTest_None)
                 service = new Service();
             else

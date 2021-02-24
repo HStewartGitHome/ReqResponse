@@ -2,7 +2,7 @@
 
 internal class MethodServer
 {
-    private static void Main(string[] args)
+    private static void Main()
     {
         Server.NewServer(11000);
     }

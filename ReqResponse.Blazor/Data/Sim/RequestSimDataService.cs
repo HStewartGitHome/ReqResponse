@@ -10,7 +10,7 @@ namespace ReqResponse.Blazor.Data.Sim
     public class RequestSimDataService : IRequestDataService
     {
         private List<TestRequest> _requests = null;
-        private ILogger<RequestSimDataService> _logger = null;
+        private readonly ILogger<RequestSimDataService> _logger = null;
 
         #region constructor
 
@@ -193,14 +193,16 @@ namespace ReqResponse.Blazor.Data.Sim
                                                Result_Options option,
                                                int id)
         {
-            TestRequest request = new TestRequest();
-            request.InputXml = XmlHelper.CreateRequestString(method, value1, value2);
-            request.ExpectedValue = result;
-            request.ExpectedResult = option;
-            request.Id = id;
-            request.Value1 = value1;
-            request.Value2 = value2;
-            request.Method = method;
+            TestRequest request = new TestRequest
+            {
+                InputXml = XmlHelper.CreateRequestString(method, value1, value2),
+                ExpectedValue = result,
+                ExpectedResult = option,
+                Id = id,
+                Value1 = value1,
+                Value2 = value2,
+                Method = method
+            };
 
             return request;
         }

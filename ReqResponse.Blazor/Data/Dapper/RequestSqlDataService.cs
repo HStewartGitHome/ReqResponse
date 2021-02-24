@@ -11,8 +11,8 @@ namespace ReqResponse.Blazor.Data.Dapper
 {
     public class RequestSqlDataService : IRequestDataService
     {
-        private ISqlDataAccess _dataAccess = null;
-        private ILogger<RequestSqlDataService> _logger = null;
+        private readonly ISqlDataAccess _dataAccess = null;
+        private readonly ILogger<RequestSqlDataService> _logger = null;
 
         #region constructor
 

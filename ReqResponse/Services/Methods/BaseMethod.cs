@@ -14,8 +14,10 @@ namespace ReqResponse.Services.Methods
 
         public virtual Response ExecuteRequest(Request request)
         {
-            Response response = new Response();
-            response.Result = VerifyRequestValues(request);
+            Response response = new Response
+            {
+                Result = VerifyRequestValues(request)
+            };
 
             return response;
         }
@@ -46,16 +48,14 @@ namespace ReqResponse.Services.Methods
                 result = false;
             else if (option == Param_Option.IntValue)
             {
-                int value;
-                if (int.TryParse(str, out value))
+                if (int.TryParse(str, out _))
                     result = true;
                 else
                     result = false;
             }
             else if (option == Param_Option.NoneZeroIntValue)
             {
-                int value;
-                if (int.TryParse(str, out value))
+                if (int.TryParse(str, out int value))
                 {
                     if (value == 0)
                         result = false;
@@ -67,13 +67,6 @@ namespace ReqResponse.Services.Methods
             }
 
             return result;
-        }
-
-        internal BaseMethod GetMethod(Request request)
-        {
-            BaseMethod method = null;
-
-            return method;
         }
     }
 }

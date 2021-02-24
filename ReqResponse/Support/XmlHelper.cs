@@ -12,16 +12,14 @@ namespace ReqResponse.Support
         {
             if (string.IsNullOrEmpty(xml))
             {
-                return default(T);
+                return default;
             }
             try
             {
                 XmlSerializer serializer = XmlSerializer.FromTypes(new[] { typeof(T) })[0];
                 var stringReader = new StringReader(xml);
-                using (var reader = XmlReader.Create(stringReader))
-                {
-                    return (T)serializer.Deserialize(reader);
-                }
+                using var reader = XmlReader.Create(stringReader);
+                return (T)serializer.Deserialize(reader);
             }
             catch (Exception ex)
             {
@@ -37,11 +35,9 @@ namespace ReqResponse.Support
 
                 XmlSerializer xmlSerializer = XmlSerializer.FromTypes(new[] { type })[0];
 
-                using (StringWriter textWriter = new StringWriter())
-                {
-                    xmlSerializer.Serialize(textWriter, toSerialize);
-                    return textWriter.ToString();
-                }
+                using StringWriter textWriter = new StringWriter();
+                xmlSerializer.Serialize(textWriter, toSerialize);
+                return textWriter.ToString();
             }
             catch (Exception ex)
             {
@@ -53,7 +49,6 @@ namespace ReqResponse.Support
                                                  string value1,
                                                  string value2)
         {
-            string result = "";
             Request request = new Request
             {
                 Method = method,
@@ -61,7 +56,7 @@ namespace ReqResponse.Support
                 Value2 = value2
             };
 
-            result = (string)XmlHelper.SerializeObject<Request>(typeof(Request), request);
+            string result = SerializeObject(typeof(Request), request);
 
             return result;
         }

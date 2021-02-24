@@ -18,7 +18,7 @@ namespace TestApp
             IService service = new Service();
             outputXML = service.ExecuteXMLRequest(inputXML);
             response = XmlHelper.DeserializeObject<Response>(outputXML);
-            Console.WriteLine("TestXml:   Response Result Value=" + response.ResultValue + " Result=" + response.Result.ToString());
+            Console.WriteLine($"TestXml:   Response Result Value={response.ResultValue} Result={response.Result} Expected Result {result}");
         }
 
         public static void TestBlankXML()
@@ -31,7 +31,7 @@ namespace TestApp
             outputXML = service.ExecuteXMLRequest(inputXML);
 
             response = XmlHelper.DeserializeObject<Response>(outputXML);
-            Console.WriteLine("TestBlankXML:  Response Result Value=" + response.ResultValue + " Result=" + response.Result.ToString());
+            Console.WriteLine($"TestBlankXML:  Response Result Value={response.ResultValue}  Result={response.Result}");
         }
 
         public static void TestInvaldXml()
@@ -43,8 +43,9 @@ namespace TestApp
             IService service = new Service();
             outputXML = service.ExecuteXMLRequest(inputXML);
             response = XmlHelper.DeserializeObject<Response>(outputXML);
-            Console.WriteLine("TestInvaldXml: Response Result Value=" + response.ResultValue + " Result=" + response.Result.ToString());
+            Console.WriteLine($"TestInvalidXML:  Response Result Value={response.ResultValue}  Result={response.Result}");
         }
+       
 
         public static void TestDivideByZeroXml()
         {
@@ -55,7 +56,7 @@ namespace TestApp
             IService service = new Service();
             outputXML = service.ExecuteXMLRequest(inputXML);
             response = XmlHelper.DeserializeObject<Response>(outputXML);
-            Console.WriteLine("TestDivideByZeroXml: Response Result Value=" + response.ResultValue + " Result=" + response.Result.ToString());
+            Console.WriteLine($"TestDivideByZeroXML:  Response Result Value={response.ResultValue}  Result={response.Result}");
         }
     }
 }

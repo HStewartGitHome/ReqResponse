@@ -2,11 +2,11 @@
 title: ReqResponse Readme
 ---
 
- By Stewart Hyde
-================
+By Stewart Hyde
+===============
 
-**Introduction**
-================
+Introduction
+============
 
 I design this GitHub project for demonstrating the ability to create a testing
 environment designed to test XML based service to a simulated device which could
@@ -27,8 +27,8 @@ because of testing or because of an actual change in code on the device that is
 connected via the socket connection. Any issues can be setup to email so that
 notification will be made.
 
-**Basic application design**
-============================
+Basic application design
+========================
 
 This is project is completely in .Net Core 3.1 and uses the latest Blazor
 technology to show results to use and email any errors to a specific user. The
@@ -66,8 +66,8 @@ The following is example screen used by Test Explorer.
 There is also a small include TestApp.exe console application, I found this was
 a simple way to test method during development. But is not required.
 
-**Blazor Web Test application**
-===============================
+Blazor Web Test application
+===========================
 
 This is a visual way to display the results of test is a web application that
 can results can be stored in SQL database and saved for later analysis. Current
@@ -155,8 +155,8 @@ The system can report this issues on screen as below.
 
 ![](media/f5e3bcd3ee48eabb498611b73cd7fc97.png)
 
-**Blazor Web Simulated default Requests**
-=========================================
+Blazor Web Simulated default Requests
+=====================================
 
 Inside the ReqResponse.Blazor.exe there is logic to load the simulated data into
 memory and it stores data into SQL database. The following is a screenshot from
@@ -166,8 +166,8 @@ ReqResponse.Blazor.Data.Sim. RequestSimDataService
 
 ![](media/3acedc95ef89a30bcb4f61e4440362f8.png)
 
-**Blazor Web SQL Sample Data**
-==============================
+Blazor Web SQL Sample Data
+==========================
 
 Requests are store into SQL tabled and will later be loaded from this Table. If
 the table is empty, this table will contained the data loaded from simulated
@@ -185,17 +185,22 @@ which is all rows in the Requests table.
 
 ![](media/65c6a11a92bc1847244e4bbcc8e94e77.png)
 
-**Blazor example Email**
-========================
+Blazor example Email
+====================
 
 The Blazor application as ability to email the specific user. It uses email
 configuration in the Json file.
 
 ![](media/5da2959c1bec3165c53432e08c8a18ca.png)
 
-**Blazor Json for Connect string and Email**
-============================================
+Blazor Json for Connect string and Email
+========================================
 
 Note Json files must be a change for your specific configuration.
 
 ![](media/ef4103c0130385d382fbf493b74de054.png)
+
+Updates 
+========
+
+02/24/2021 Updated Project To Net 5.0 and also some cleanup
