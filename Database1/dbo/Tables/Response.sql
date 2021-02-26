@@ -6,5 +6,7 @@
     [ActualValue] NVARCHAR(50) NULL,
     [ActualResult] INT NULL, 
     [Success] BIT NULL, 
-    [Created] NVARCHAR(50) NULL
+    [Created] NVARCHAR(50) NULL, 
+    [TimeExecuted] INT NULL, 
+    [RequestOption] INT NULL
 )

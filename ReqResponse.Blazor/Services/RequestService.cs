@@ -1,19 +1,12 @@
 ﻿using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.FileProviders.Embedded;
-using ReqResponse.Blazor.Data;
-using ReqResponse.Blazor.Data.Dapper;
-using ReqResponse.Blazor.Models;
-using ReqResponse.Blazor.Services.Email;
-using ReqResponse.Blazor.Services.XmlAPI;
+using ReqResponse.Services.Email;
+using ReqResponse.Services.XmlAPI;
+using ReqResponse.DataLayer.Data;
+using ReqResponse.DataLayer.Models;
 using ReqResponse.Models;
-using ReqResponse.Services.Methods;
 using ReqResponse.Support;
 using System;
 using System.Collections.Generic;
-using System.Data;
-using System.Diagnostics.Eventing.Reader;
-using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 
 namespace ReqResponse.Blazor.Services
@@ -21,13 +14,16 @@ namespace ReqResponse.Blazor.Services
     public class RequestService : IRequestService
     {
         #region Private Variables
+
         private readonly IConfiguration _configuration = null;
         private readonly IDataServiceFactory _dataFactory = null;
         private readonly IServiceFactory _serviceFactory = null;
         private readonly Options _options = null;
-        #endregion
+
+        #endregion Private Variables
 
         #region Public Variables
+
         public string ErrorString { get; set; }
         public int MaxRequests { get; set; }
         public int TakenRequests { get; set; }
@@ -42,10 +38,13 @@ namespace ReqResponse.Blazor.Services
         public IResponseDataService SimResponseDataService { get; set; } = null;
         public IResponseSummaryDataService SqlResponseSummaryDataService { get; set; } = null;
         public IResponseSummaryDataService SimResponseSummaryDataService { get; set; } = null;
+
         public event Action RefreshRequested;
-        #endregion
+
+        #endregion Public Variables
 
         #region Constructor
+
         public RequestService(IConfiguration configuration,
                               IDataServiceFactory dataFactory,
                               IServiceFactory serviceFactory)
@@ -58,28 +57,47 @@ namespace ReqResponse.Blazor.Services
             TakenRequests = 0;
             ErrorString = "";
         }
-        #endregion
+
+        #endregion Constructor
 
         #region Public CallRequestRefresh
+
         public void CallRequestRefresh()
         {
             RefreshRequested?.Invoke();
         }
-        #endregion
+
+        #endregion Public CallRequestRefresh
+
+        #region Public Reset
+
+        public async Task Reset(bool remote)
+        {
+            IXmlService service;
+            await Task.Delay(0);
+            if (remote)
+                service = _serviceFactory.GetConnectedService();
+            else
+                service = _serviceFactory.GetLocalService();
+            service.Reset();
+        }
+
+        #endregion Public Reset
 
         #region Public ProcessRequest (main)
+
         public async Task<List<TestResponse>> ProcessRequest(bool firstRequest,
-                                                             bool remoteRequest,
+                                                             Request_Option reqOption,
                                                              int requestLimit)
         {
             List<TestResponse> responses = new List<TestResponse>();
             List<TestRequest> takenRequests = new List<TestRequest>();
             int Id = await GetNextResponseID();
+            Request_Option processReqOption = reqOption;
 
             await InitializeServices();
 
             FirstRequest = firstRequest;
-            RemoteRequest = remoteRequest;
             if ((firstRequest && (Requests != null)))
             {
                 Requests = null;
@@ -96,42 +114,165 @@ namespace ReqResponse.Blazor.Services
                 ResponseSetId = await GetResponseSetID();
             }
 
-            if (remoteRequest)
-                requestLimit = _options.NetLimit;
-            else
-                requestLimit = 9999;
+            DateTime created = DateTime.Now;
+            if (reqOption == Request_Option.StayConnected)
+            {
+                if (_options.DebugOption == Debug_Option.NetworkClientDataConsole)
+                    Console.WriteLine($"Client {DateTime.Now} doing connect for StayConnected");
+
+                created = DateTime.Now;
+                if (await _serviceFactory.GetConnectedService().Connnect() == false)
+                {
+                    // if we can't connect than switch to connected mode
+                    if (_options.DebugOption == Debug_Option.NetworkClientDataConsole)
+                        Console.WriteLine($"Client {DateTime.Now} failed for StayConnected switchig to Connected");
+
+                    processReqOption = Request_Option.Connected;
+                }
+            }
+
+            requestLimit = GetRequestLimit(processReqOption);
+
             int limit = requestLimit;
             if (ActiveRequests.Count < limit)
                 limit = ActiveRequests.Count;
             for (int index = 0; index < limit; index++)
             {
+                if (processReqOption == Request_Option.Connected)
+                {
+                    if (_options.DebugOption == Debug_Option.NetworkClientDataConsole)
+                        Console.WriteLine($"Client {DateTime.Now} doing connect for Connected");
+
+                    created = DateTime.Now;
+                    await _serviceFactory.GetConnectedService().Connnect();
+                }
+                else if (index > 0)
+                    created = DateTime.Now;
+
                 TestRequest request = ActiveRequests[index];
-                TestResponse response = await ProcessRequest(request, remoteRequest);
+                TestResponse response = await ProcessRequest(request, created, processReqOption);
                 if (response != null)
                 {
                     response.Id = Id++;
                     response.ResponseSetId = ResponseSetId;
+                    response.RequestOption = reqOption;
+
                     responses.Add(response);
 
-                    if (remoteRequest)
+                    if (RemoteRequest)
                         takenRequests.Add(request);
                 }
+                else
+                {
+                    if (_options.DebugOption == Debug_Option.NetworkClientDataConsole)
+                        Console.WriteLine($"Client {DateTime.Now} terminating loop");
+                    index = limit;
+                }
+
+                if (processReqOption == Request_Option.Connected)
+                {
+                    if (_options.DebugOption == Debug_Option.NetworkClientDataConsole)
+                        Console.WriteLine($"Client {DateTime.Now} doing disconnect for Connected");
+
+                    await _serviceFactory.GetConnectedService().Disconnnect();
+                }
+            }
+
+            if (reqOption == Request_Option.StayConnected)
+            {
+                if (_options.DebugOption == Debug_Option.NetworkClientDataConsole)
+                    Console.WriteLine($"Client {DateTime.Now} doing disconnect for StayConnected");
+
+                await _serviceFactory.GetConnectedService().Disconnnect();
             }
 
             foreach (TestRequest request in takenRequests)
                 ActiveRequests.Remove(request);
             TakenRequests += takenRequests.Count;
 
-            if (remoteRequest)
+            if ((reqOption == Request_Option.Connected) || (reqOption == Request_Option.StayConnected))
+            {
                 CallRequestRefresh();
+            }
 
             if (responses.Count > 0)
                 await SaveResponse(responses);
             return responses;
         }
-        #endregion
+
+        #endregion Public ProcessRequest (main)
+
+        #region Private ProcessRequest
+
+        private async Task<TestResponse> ProcessRequest(TestRequest request,
+                                                        DateTime created,
+                                                        Request_Option reqOption)
+        {
+            IXmlService service;
+            TestResponse response = new TestResponse
+            {
+                Request = request,
+                Success = false,
+                RequestId = request.Id
+            };
+
+            if (reqOption == Request_Option.Connected)
+                service = _serviceFactory.GetConnectedService();
+            else if (reqOption == Request_Option.StayConnected)
+                service = _serviceFactory.GetConnectedService();
+            else
+                service = _serviceFactory.GetLocalService();
+
+            string xmlResponse = await service.ExecuteRequest(request.InputXml);
+            Response resp = XmlHelper.DeserializeObject<Response>(xmlResponse);
+            response.ActualResult = resp.Result;
+            response.ActualValue = resp.ResultValue;
+            response.Created = created;
+            response.MakeTimeExecuted();
+
+            if (response.Request.ExpectedResult == response.ActualResult)
+            {
+                response.Success = true;
+                if (response.ActualResult == Result_Options.Ok)
+                {
+                    if (response.Request.ExpectedValue.CompareTo(response.ActualValue) != 0)
+                    {
+                        response.Success = false;
+                        response.ActualResult = Result_Options.ValueMismatch;
+                    }
+                }
+            }
+
+            return response;
+        }
+
+        #endregion Private ProcessRequest
+
+        #region GetRequestLimit
+
+        public int GetRequestLimit(Request_Option reqOption)
+        {
+            int requestLimit;
+            if (reqOption == Request_Option.Connected)
+            {
+                RemoteRequest = true;
+                requestLimit = _options.NetLimit;
+            }
+            else if (reqOption == Request_Option.StayConnected)
+            {
+                RemoteRequest = true;
+                requestLimit = _options.StayNetLimit;
+            }
+            else
+                requestLimit = 9999;
+
+            return requestLimit;
+        }
+
+        #endregion GetRequestLimit
 
         #region Public GetReponseSummaryModelBySetId
+
         public async Task<ResponseSummaryModel> GetReponseSummaryModelBySetId(int setId)
         {
             List<ResponseSummaryModel> models = null;
@@ -145,12 +286,18 @@ namespace ReqResponse.Blazor.Services
 
             return model;
         }
-        #endregion
+
+        #endregion Public GetReponseSummaryModelBySetId
 
         #region Public GetFailedResponsesForSet
+
         public async Task<List<TestResponse>> GetFailedResponsesForSet(int setId)
         {
             List<TestResponse> responses = null;
+
+            if (Requests == null)
+                Requests = await InitializeRequests();
+
             await LoadIfNeedResponses();
             await LoadIfNeedResponseSummary();
 
@@ -168,9 +315,11 @@ namespace ReqResponse.Blazor.Services
 
             return responses;
         }
-        #endregion
+
+        #endregion Public GetFailedResponsesForSet
 
         #region Public GetAllSummaryModels
+
         public async Task<List<ResponseSummaryModel>> GetAllSummaryModels()
         {
             List<ResponseSummaryModel> models;
@@ -181,22 +330,11 @@ namespace ReqResponse.Blazor.Services
                 await SimResponseSummaryDataService.CreateAll(models);
             return models;
         }
-        #endregion
 
-        #region Public Reset
-        public async Task Reset(bool remote)
-        {
-            IXmlService service;
-            await Task.Delay(0);
-            if (remote)
-                service = _serviceFactory.GetConnectedService();
-            else
-                service = _serviceFactory.GetLocalService();
-            service.Reset();
-        }
-        #endregion
+        #endregion Public GetAllSummaryModels
 
         #region Public IsNeedRequest
+
         public bool IsNeedRequest()
         {
             if (MaxRequests == 0)
@@ -206,9 +344,11 @@ namespace ReqResponse.Blazor.Services
             else
                 return false;
         }
-        #endregion
+
+        #endregion Public IsNeedRequest
 
         #region Public GetTestErrorReport
+
         public async Task<TestErrorReport> GetTestErrorReport()
         {
             TestErrorReport report = new TestErrorReport();
@@ -231,9 +371,11 @@ namespace ReqResponse.Blazor.Services
             report.LastErrorDateTime = LastTime;
             return report;
         }
-        #endregion
+
+        #endregion Public GetTestErrorReport
 
         #region Public EmailTestErrorReport
+
         public async Task EmailTestErrorReport()
         {
             TestErrorReport report = new TestErrorReport();
@@ -262,12 +404,14 @@ namespace ReqResponse.Blazor.Services
                 await CreateAndEmailReport(report, errorModels);
             SetEmailDateTime();
         }
-        #endregion
+
+        #endregion Public EmailTestErrorReport
+
+        #region private CreateAndEmailReport
 
         private async Task CreateAndEmailReport(TestErrorReport errorReport,
                                                  List<ResponseSummaryModel> errorModels)
         {
-
             List<string> strs = new List<string>();
 
             string str = "Error Report for " + errorReport.Created.ToString() + " Last Report Time = " + errorReport.CurrentLastErrorDateTime.ToString();
@@ -287,8 +431,11 @@ namespace ReqResponse.Blazor.Services
             await service.EmailErrorReportStrings(strs);
         }
 
+        #endregion private CreateAndEmailReport
+
         #region AddSummaryToEmail
-        private async Task  AddSummaryToEmail( List<string> strs, 
+
+        private async Task AddSummaryToEmail(List<string> strs,
                                  ResponseSummaryModel summary)
         {
             string str;
@@ -297,7 +444,7 @@ namespace ReqResponse.Blazor.Services
             strs.Add("");
 
             List<TestResponse> responses = await GetFailedResponsesForSet(summary.ResponseSetId);
-            foreach(TestResponse response in responses)
+            foreach (TestResponse response in responses)
             {
                 str = "      ResponseId:    " + @response.Id.ToString();
                 strs.Add(str);
@@ -319,54 +466,12 @@ namespace ReqResponse.Blazor.Services
                 strs.Add(str);
             }
             strs.Add("");
-
-
         }
-        #endregion
 
-        #region Private ProcessRequest
-        private async Task<TestResponse> ProcessRequest(TestRequest request,
-                                                        bool remoteRequest)
-        {
-            IXmlService service;
-            TestResponse response = new TestResponse
-            {
-                Request = request,
-                Success = false,
-                RequestId = request.Id
-            };
-
-            if (remoteRequest)
-                service = _serviceFactory.GetConnectedService();
-            else
-                service = _serviceFactory.GetLocalService();
-
-            string xmlResponse = await service.ExecuteRequest(request.InputXml);
-            Response resp = XmlHelper.DeserializeObject<Response>(xmlResponse);
-            response.ActualResult = resp.Result;
-            response.ActualValue = resp.ResultValue;
-            response.Created = DateTime.Now;
-
-
-            if (response.Request.ExpectedResult == response.ActualResult)
-            {
-                response.Success = true;
-                if (response.ActualResult == Result_Options.Ok)
-                {
-                    if (response.Request.ExpectedValue.CompareTo(response.ActualValue) != 0)
-                    {
-                        response.Success = false;
-                        response.ActualResult = Result_Options.ValueMismatch;
-                    }
-                }
-            }
-
-            return response;
-        }
-        #endregion
-
+        #endregion AddSummaryToEmail
 
         #region Private routines
+
         public async Task InitializeServices()
         {
             if (SqlRequestDataService == null)
@@ -382,6 +487,7 @@ namespace ReqResponse.Blazor.Services
             if (SimResponseSummaryDataService == null)
                 SimResponseSummaryDataService = await _dataFactory.GetISimResponseSummaryDataService();
         }
+
         private async Task<int> GetNextResponseID()
         {
             int Id = 1;
@@ -393,6 +499,7 @@ namespace ReqResponse.Blazor.Services
 
             return Id;
         }
+
         private async Task<int> GetResponseSetID()
         {
             int Id = 1;
@@ -404,45 +511,48 @@ namespace ReqResponse.Blazor.Services
 
             return Id;
         }
+
         public async Task SaveResponse(List<TestResponse> responses)
         {
+            var models = MakeResponseDataModels(responses);
+            await InitializeServices();
+            await SqlResponseDataService.AddAll(models);
+            await UpdateSummary(responses);
+        }
+
+        public List<ResponseDataModel> MakeResponseDataModels(List<TestResponse> responses)
+        {
             List<ResponseDataModel> models = new List<ResponseDataModel>();
+
             foreach (TestResponse response in responses)
             {
                 ResponseDataModel model = new ResponseDataModel(response);
                 if (model != null)
                 {
                     model.ResponseSetId = ResponseSetId;
-
                     models.Add(model);
                 }
             }
+            return models;
+        }
 
-            await InitializeServices();
-            await SqlResponseDataService.AddAll(models);
-
-            ResponseSummaryModel summary = new ResponseSummaryModel();
+        private async Task UpdateSummary(List<TestResponse> responses)
+        {
+            ResponseSummaryModel summary;
+            if (FirstRequest)
+                summary = new ResponseSummaryModel();
+            else
+                summary = await SqlResponseSummaryDataService.GetByResponseSetId(ResponseSetId);
             Update(summary, responses);
 
             if (FirstRequest)
                 await SqlResponseSummaryDataService.Create(summary);
             else
-            {
-                ResponseSummaryModel model = await SqlResponseSummaryDataService.GetByResponseSetId(summary.ResponseSetId);
-                if (model != null)
-                {
-                    model.SuccessfullCount += summary.SuccessfullCount;
-                    model.FailedCount += summary.FailedCount;
-                    model.OkCount += summary.OkCount;
-                    model.ErrorCount += summary.ErrorCount;
-                    await SqlResponseSummaryDataService.Update(model);
-                }
-                else
-                    await SqlResponseSummaryDataService.Create(summary);
-            }
+                await SqlResponseSummaryDataService.Update(summary);
         }
+
         private void Update(ResponseSummaryModel summary,
-                            List<TestResponse> responses)
+                                List<TestResponse> responses)
         {
             summary.ResponseSetId = ResponseSetId;
             foreach (TestResponse response in responses)
@@ -456,8 +566,13 @@ namespace ReqResponse.Blazor.Services
                     summary.OkCount++;
                 else
                     summary.ErrorCount++;
+
+                summary.TimeExecuted += response.TimeExecuted;
+                Console.WriteLine($"RequestOption: {response.RequestOption}  Response Time: {response.TimeExecuted}  Total Time: {summary.TimeExecuted}  OkCount:  {summary.OkCount} ErrorCount: {summary.ErrorCount}");
+                summary.RequestOption = response.RequestOption;
             }
         }
+
         private async Task<TestResponse> MakeTestResponseFromModel(ResponseDataModel model)
         {
             List<TestRequest> requests = await SimRequestDataService.GetAll();
@@ -469,7 +584,9 @@ namespace ReqResponse.Blazor.Services
                 ResponseSetId = model.ResponseSetId,
                 Success = model.Success,
                 ActualResult = model.ActualResult,
-                ActualValue = model.ActualValue
+                ActualValue = model.ActualValue,
+                TimeExecuted = model.TimeExecuted,
+                RequestOption = model.RequestOption
             };
 
             foreach (TestRequest req in requests)
@@ -479,7 +596,12 @@ namespace ReqResponse.Blazor.Services
             }
             if (request == null)
             {
-                response.Request = null;
+                response.Request = new TestRequest
+                {
+                    Method = "NULL",
+                    Value1 = "NULL",
+                    Value2 = "NULL"
+                };
                 response.RequestId = model.RequestId;
             }
             else
@@ -493,7 +615,6 @@ namespace ReqResponse.Blazor.Services
 
         private async Task LoadIfNeedResponses()
         {
-
             List<ResponseDataModel> models;
 
             await InitializeServices();
@@ -504,11 +625,10 @@ namespace ReqResponse.Blazor.Services
                 models = await SqlResponseDataService.GetAll();
                 await SimResponseDataService.CreateAll(models);
             }
-
         }
+
         private async Task LoadIfNeedResponseSummary()
         {
-
             List<ResponseSummaryModel> models;
 
             await InitializeServices();
@@ -519,7 +639,6 @@ namespace ReqResponse.Blazor.Services
                 models = await SqlResponseSummaryDataService.GetAll();
                 await SimResponseSummaryDataService.CreateAll(models);
             }
-
         }
 
         private async Task<List<TestRequest>> InitializeRequests()
@@ -566,7 +685,6 @@ namespace ReqResponse.Blazor.Services
             _configuration["LastEmailDateTime"] = str;
         }
 
-
-        #endregion
+        #endregion Private routines
     }
 }

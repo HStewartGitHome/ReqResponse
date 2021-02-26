@@ -1,5 +1,6 @@
 ﻿@page "/remoterequests"
 
+@using ReqResponse.Models
 @inject ReqResponse.Blazor.Services.IRequestService service
 
 @if (string.IsNullOrWhiteSpace(messageString) == false)
@@ -25,10 +26,12 @@ else
         <thead class="thead-dark">
             <tr>
                 <th>Id</th>
+                <th>Request Option</th>
                 <td>Created</td>
+                <td>Time Executed</td>
                 <td>Success</td>
-                <td>ResponseSetId</td>
-                <td>RequestId</td>
+                <td>Response SetId</td>
+                <td>Request Id</td>
                 <th>Method</th>
                 <th>Value1</th>
                 <th>Value2</th>
@@ -42,7 +45,9 @@ else
             <Virtualize Items="responses" Context="response">
                 <tr>
                     <th>@response.Id.ToString()</th>
+                    <th>@response.RequestOption.ToString()</th>
                     <th>@response.Created.ToString()</th>
+                    <th>@response.TimeExecuted.ToString()</th>
                     <th>@response.Success.ToString()</th>
                     <th>@response.ResponseSetId.ToString()</th>
                     <th>@response.Request.Id.ToString()</th>
@@ -68,7 +73,7 @@ else
     {
         bool working = true;
         await Task.Yield();
-        responses = await service.ProcessRequest(true, true, 9999);
+        responses = await service.ProcessRequest(true, Request_Option.Connected, 9999);
         errorString = service.ErrorString;
         service.RefreshRequested += RefreshMe;
 
@@ -88,12 +93,12 @@ else
         if (service.IsNeedRequest())
         {
             await Task.Yield();
-            List<TestResponse> newResponses = await service.ProcessRequest(false, true, 9999);
+            List<TestResponse> newResponses = await service.ProcessRequest(false, Request_Option.Connected, 9999);
             foreach (TestResponse resp in newResponses)
                 responses.Add(resp);
 
             MakeMessageString(false);
-            await Task.Delay(500);
+             await Task.Delay(500);
         }
         else
         {

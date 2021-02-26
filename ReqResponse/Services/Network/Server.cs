@@ -34,13 +34,13 @@ namespace ReqResponse.Services.Network
                 // Enter the listening loop.
                 while (true)
                 {
-                    if (options.DebugOption == Debug_Option.NetworkServerConnection)
+                    if (options.ServerDebugOption == Debug_Option.NetworkServerConnection)
                         Console.Write("Waiting for a connection... ");
 
                     // Perform a blocking call to accept requests.
                     // You could also use server.AcceptSocket() here.
                     TcpClient client = server.AcceptTcpClient();
-                    if (options.DebugOption == Debug_Option.NetworkServerConnection)
+                    if (options.ServerDebugOption == Debug_Option.NetworkServerConnection)
                         Console.WriteLine("Connected!");
 
                     data = null;
@@ -55,12 +55,12 @@ namespace ReqResponse.Services.Network
                     {
                         // Translate data bytes to a ASCII string.
                         data = System.Text.Encoding.ASCII.GetString(bytes, 0, i);
-                        if (options.DebugOption == Debug_Option.NetworkServerData)
-                            Console.WriteLine("Received: {0}", data);
+                        if (options.ServerDebugOption == Debug_Option.NetworkServerData)
+                            Console.WriteLine($"Received: {data}");
 
                         string output = service.ExecuteXMLRequest(data);
-                        if (options.DebugOption == Debug_Option.NetworkServerData)
-                            Console.WriteLine("Response: {0}", output);
+                        if (options.ServerDebugOption == Debug_Option.NetworkServerData)
+                            Console.WriteLine($"Response: {output}");
 
                         byte[] msg = System.Text.Encoding.ASCII.GetBytes(output);
                         stream.Write(msg, 0, msg.Length);
@@ -72,7 +72,7 @@ namespace ReqResponse.Services.Network
             }
             catch (SocketException e)
             {
-                Console.WriteLine("SocketException: {0}", e);
+                Console.WriteLine($"SocketException: {e}");
             }
             finally
             {

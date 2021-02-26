@@ -25,6 +25,15 @@
         None = 0
     }
 
+    [System.Flags]
+    public enum Request_Option
+    {
+        Connected = 1,
+        Local = 2,
+        StayConnected =4,
+        None = 0
+    }
+
     public enum Debug_Option
     {
         None = 0,

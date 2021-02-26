@@ -5,10 +5,12 @@
 	@okCount NVARCHAR(50),
 	@errorCount NVARCHAR(50),
     @created NVARCHAR(50),
+	@timeExecuted INT,
+	@requestOption INT,
     @Id int OUTPUT
 AS
 BEGIN
-    INSERT INTO ResponseSummary (ResponseSetId, SuccessfullCount,FailedCount,OkCount,ErrorCount,Created)
-    VALUES (@responseSetId,@successfullCount,@failedCount,@okCount,@errorCount,@created)
+    INSERT INTO ResponseSummary (ResponseSetId, SuccessfullCount,FailedCount,OkCount,ErrorCount,Created,TimeExecuted,RequestOption)
+    VALUES (@responseSetId,@successfullCount,@failedCount,@okCount,@errorCount,@created,@timeExecuted,@requestOption)
 	SET @Id = @@IDENTITY
 END

@@ -80,6 +80,7 @@
     <Build Include="dbo\Stored Procedures\spResponseSummary_GetByResponseSetId.sql" />
     <Build Include="dbo\Stored Procedures\spResponses_GetAll.sql" />
     <Build Include="dbo\Stored Procedures\spResponseSummary_GetCount.sql" />
+    <Build Include="dbo\Stored Procedures\spRequests_GetNextID.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Database1.publish.xml" />

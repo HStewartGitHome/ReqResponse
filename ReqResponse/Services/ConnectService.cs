@@ -3,95 +3,72 @@ using ReqResponse.Services.Methods;
 using ReqResponse.Services.Network;
 using ReqResponse.Support;
 using System;
+using System.Threading.Tasks;
 
 namespace ReqResponse.Services
 {
-    public class ConnectService : IService
+    public class ConnectService : CommonService
     {
-        public Result_Options LastResult { get; set; }
-
-        public bool IsConnectedService { get; set; }
+        private Options PrivateOptions { get; set; }
 
         public ConnectService()
         {
             LastResult = Result_Options.Unknown;
             IsConnectedService = true;
+            PrivateOptions = Factory.GetOptions();
         }
 
-        public Response ExecuteRequest(Request request)
+    
+
+        public override string ExecuteXMLRequest(string xmlRequest)
         {
-            Response response = new Response();
-            BaseMethod method = null;
+            if (PrivateOptions.DebugOption == Debug_Option.NetworkClientDataConsole)
+                Console.WriteLine($"ExecuteXMLRequest {DateTime.Now} Start....");
 
-            LastResult = Result_Options.Unknown;
 
-            if (request.Method.CompareTo("Add") == 0)
-                method = new Add();
-            else if (request.Method.CompareTo("Subtract") == 0)
-                method = new Subtract();
-            else if (request.Method.CompareTo("Multiply") == 0)
-                method = new Multiply();
-            if (request.Method.CompareTo("Divide") == 0)
-                method = new Divide();
+            Result_Options result = DeserializeRequest(xmlRequest, out Request request);
 
-            if (method != null)
-                response = method.ExecuteRequest(request);
-            else
-                response.Result = Result_Options.InvalidRequestMethod;
-
-            LastResult = response.Result;
-            return response;
-        }
-
-        public string ExecuteXMLRequest(string xmlRequest)
-        {
-            Result_Options result = Result_Options.Unknown;
-            Request request;
-
-            // first deserialize xmlRequest
-            try
-            {
-                request = (Request)XmlHelper.DeserializeObject<Request>(xmlRequest);
-            }
-            catch (Exception)
-            {
-                result = Result_Options.ExceptionParsingRequest;
-                request = null;
-            }
-
+            string xml;
             if (request == null)
             {
                 if (result == Result_Options.Unknown)
                     result = Result_Options.NullRequest;
 
-                return CreateNullResponse(result);
+                xml = CreateNullResponse(result);
             }
-            else if (Client.SendRequest(xmlRequest, "localhost", 11000) == true)
-                return Client.XmlResult;
+            else if (Client.SendRequest(xmlRequest, PrivateOptions.HostName, PrivateOptions.Port) == true)
+                xml = Client.XmlResult;
             else
-                return CreateNullResponse(Result_Options.FailedConnection);
+                xml = CreateNullResponse(Result_Options.FailedConnection);
+
+            if (PrivateOptions.DebugOption == Debug_Option.NetworkClientDataConsole)
+                Console.WriteLine($"ExecuteXMLRequest {DateTime.Now} Finish....");
+
+            return xml;
         }
 
-        public string CreateNullResponse(Result_Options result)
+       
+
+        public override async Task<bool> Connnect()
         {
-            string xmlResponse = "";
-            LastResult = result; ;
+            string host = PrivateOptions.HostName;
+            int port = PrivateOptions.Port;
 
-            Response response = new Response
-            {
-                Result = LastResult
-            };
+            if (PrivateOptions.DebugOption == Debug_Option.NetworkClientDataConsole)
+                Console.WriteLine($"Client {DateTime.Now} connecting to Host: {host} on Port: {port}");
 
-            try
-            {
-                xmlResponse = (string)XmlHelper.SerializeObject<Response>(typeof(Response), response);
-            }
-            catch (Exception)
-            {
-                LastResult = Result_Options.ExceptionParseResponse;
-            }
+            bool result = Client.Connect(host,port);
+            await Task.Delay(0);
+            return result;
+        }
 
-            return xmlResponse;
+        public override async Task<bool> Disconnnect()
+        {
+            if (PrivateOptions.DebugOption == Debug_Option.NetworkClientDataConsole)
+                Console.WriteLine($"Client {DateTime.Now} disconnecting");
+            bool result = Client.Disconnect();
+            await Task.Delay(0);
+            return result; 
         }
     }
 }

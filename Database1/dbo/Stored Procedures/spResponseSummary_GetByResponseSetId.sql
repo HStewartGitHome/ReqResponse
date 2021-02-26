@@ -2,7 +2,7 @@
     @responseSetId INT
 AS
 begin
-      SELECT Id,ResponseSetId,SuccessfullCount,FailedCount,OkCount,ErrorCount,Created
+      SELECT Id,ResponseSetId,SuccessfullCount,FailedCount,OkCount,ErrorCount,Created,TimeExecuted,RequestOption
       FROM dbo.ResponseSummary
       WHERE ResponseSetId = @responseSetId
 end

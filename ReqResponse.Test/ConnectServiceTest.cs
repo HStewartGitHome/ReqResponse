@@ -7,6 +7,8 @@ namespace ReqResponse.Test
     [TestClass]
     public class ConnectServiceTest
     {
+    
+
         #region Blank XML
 
         [TestMethod]
@@ -157,7 +159,7 @@ namespace ReqResponse.Test
 
         #region private
 
-        private IService GetService()
+        private static IService GetService()
         {
             Options options = new Options();
             IService service;

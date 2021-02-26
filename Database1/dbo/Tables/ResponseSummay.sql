@@ -6,5 +6,7 @@
     [FailedCount] NVARCHAR(50) NULL, 
     [OkCount] NVARCHAR(50) NULL, 
     [ErrorCount] NVARCHAR(50) NULL,  
-    [Created] NVARCHAR(50) NULL
+    [Created] NVARCHAR(50) NULL, 
+    [TimeExecuted] INT NULL, 
+    [RequestOption] INT NULL
 )

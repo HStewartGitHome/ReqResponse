@@ -1,5 +1,6 @@
 ﻿@page "/localrequests"
 
+@using ReqResponse.Models
 @inject ReqResponse.Blazor.Services.IRequestService service
 
 @if (string.IsNullOrWhiteSpace(messageString) == false)
@@ -25,10 +26,12 @@ else
         <thead class="thead-dark">
             <tr>
                 <th>Id</th>
+                <th>Request Option</th>
                 <td>Created</td>
+                <td>Time Executed</td>
                 <td>Success</td>
-                <th>ResponseSetId</th>
-                <td>RequestId</td>
+                <th>Response SetId</th>
+                <td>Request Id</td>
                 <th>Method</th>
                 <th>Value1</th>
                 <th>Value2</th>
@@ -40,20 +43,22 @@ else
         </thead>
         <tbody>
             <Virtualize Items="responses" Context="response">
-            <tr>
-            <th>@response.Id.ToString()</th>
-            <th>@response.Created.ToString()</th>
-            <th>@response.Success.ToString()</th>
-            <th>@response.ResponseSetId.ToString()</th>
-            <th>@response.Request.Id.ToString()</th>
-            <th>@response.Request.Method</th>
-            <th>@response.Request.Value1</th>
-            <th>@response.Request.Value2</th>
-            <th>@response.ActualValue</th>
-            <th>@response.Request.ExpectedValue</th>
-            <th>@response.Request.ExpectedResult.ToString()</th>
-            <th>@response.ActualResult.ToString()</th>
-        </tr>
+                <tr>
+                    <th>@response.Id.ToString()</th>
+                    <th>@response.RequestOption.ToString()</th>
+                    <th>@response.Created.ToString()</th>
+                    <th>@response.TimeExecuted.ToString()</th>
+                    <th>@response.Success.ToString()</th>
+                    <th>@response.ResponseSetId.ToString()</th>
+                    <th>@response.Request.Id.ToString()</th>
+                    <th>@response.Request.Method</th>
+                    <th>@response.Request.Value1</th>
+                    <th>@response.Request.Value2</th>
+                    <th>@response.ActualValue</th>
+                    <th>@response.Request.ExpectedValue</th>
+                    <th>@response.Request.ExpectedResult.ToString()</th>
+                    <th>@response.ActualResult.ToString()</th>
+                </tr>
         </Virtualize>
         </tbody>
     </table>
@@ -66,7 +71,7 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        responses = await service.ProcessRequest(true, false, 9999);
+        responses = await service.ProcessRequest(true, Request_Option.Local, 9999);
         errorString = service.ErrorString;
         MakeMessageString(true);
 
