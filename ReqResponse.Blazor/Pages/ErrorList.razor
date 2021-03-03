@@ -1,6 +1,7 @@
 ﻿@page "/errorlist"
 
-@inject ReqResponse.Blazor.Services.IRequestService service
+
+@inject ReqResponse.Middleware.Services.IRequestService service
 
 <h3>Error List</h3>
 
@@ -12,12 +13,10 @@ else if (idList is null)
 <div class="h4">Loading...</div> }
 else
 {
-    @foreach (var id in idList)
-    {
-        <FailedList ResponseSetId="@id"></FailedList>
-    }
-}
-        
+@foreach (var id in idList)
+{
+<FailedList ResponseSetId="@id"></FailedList>}}
+
 
 @code { List<ResponseSummaryModel> responses = null;
     List<int> idList = null;
@@ -36,6 +35,5 @@ else
             }
             responses = null;
         }
-    } 
-}
+    } }
 

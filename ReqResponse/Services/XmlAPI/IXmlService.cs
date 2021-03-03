@@ -8,5 +8,6 @@ namespace ReqResponse.Services.XmlAPI
         Task<bool> Disconnnect();
         Task<string> ExecuteRequest(string request);
         void Reset();
+        Task StopService();
     }
 }

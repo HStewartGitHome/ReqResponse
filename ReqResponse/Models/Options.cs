@@ -4,12 +4,16 @@
     {
         public Options()
         {
-            //DebugOption = Debug_Option.Default;
+            DebugOption = Debug_Option.Default;
+            //DebugOption = Debug_Option.NetworkClientDataConsole;
+
             ServerDebugOption = Debug_Option.NetworkServerData;
             //ServerDebugOption = Debug_Option.NetworkServerConnection;
-            DebugOption = Debug_Option.NetworkClientDataConsole;
+           
             TestOption = Test_Options.Default;
             //TestOption = Test_Options.UnitTest_None;
+
+
             NetLimit = 4;
             StayNetLimit = 10;
             HostName = "localhost";

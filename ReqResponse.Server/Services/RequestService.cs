@@ -1,15 +1,17 @@
-﻿using Microsoft.Extensions.Configuration;
-using ReqResponse.Services.Email;
-using ReqResponse.Services.XmlAPI;
+﻿
+using Microsoft.Extensions.Configuration;
 using ReqResponse.DataLayer.Data;
 using ReqResponse.DataLayer.Models;
 using ReqResponse.Models;
+using ReqResponse.Services;
+using ReqResponse.Services.Email;
+using ReqResponse.Services.XmlAPI;
 using ReqResponse.Support;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace ReqResponse.Blazor.Services
+namespace ReqResponse.Middleware.Services
 {
     public class RequestService : IRequestService
     {
@@ -64,6 +66,9 @@ namespace ReqResponse.Blazor.Services
 
         public void CallRequestRefresh()
         {
+            if (_options.DebugOption == Debug_Option.NetworkClientDataConsole)
+                Console.WriteLine($"Client {DateTime.Now} invoking RefrshRequested");
+
             RefreshRequested?.Invoke();
         }
 
@@ -189,6 +194,9 @@ namespace ReqResponse.Blazor.Services
             foreach (TestRequest request in takenRequests)
                 ActiveRequests.Remove(request);
             TakenRequests += takenRequests.Count;
+
+            if (_options.DebugOption == Debug_Option.NetworkClientDataConsole)
+                Console.WriteLine($"Client {DateTime.Now} reqOption is {reqOption} befor Calling Request Refresh");
 
             if ((reqOption == Request_Option.Connected) || (reqOption == Request_Option.StayConnected))
             {
@@ -672,7 +680,8 @@ namespace ReqResponse.Blazor.Services
 
         private DateTime GetLastEmailDateTime()
         {
-            string str = _configuration.GetValue<string>("LastEmailDateTime");
+            //string str = _configuration.GetValue<string>("LastEmailDateTime");
+            string str = _configuration["LastEmailDate"];
             if (DateTime.TryParse(str, out DateTime time) == false)
                 time = DateTime.Now;
 

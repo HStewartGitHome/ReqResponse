@@ -24,8 +24,16 @@ namespace ReqResponse.Services.XmlAPI
         public void Reset()
         {
             if (_service != null)
+            {
+                _service.Reset();
                 _service = null;
+            }
             _service = new ConnectService();
+        }
+
+        public async Task StopService()
+        {
+            await _service.StopService();
         }
 
         public async Task<bool> Connnect()

@@ -16,6 +16,16 @@ namespace ReqResponse.Services
         public bool IsConnectedService { get; set; }
         public bool ExceptionHappen { get; set; }
 
+        public bool IsActive { get; set; }
+        
+        public bool IsStopping { get; set; }
+
+        public virtual async Task StopService()
+        {
+            IsStopping = true;
+            await Task.Delay(0);
+        }
+
         public virtual Task<bool> Connnect()
         {
             throw new NotImplementedException();
@@ -25,6 +35,11 @@ namespace ReqResponse.Services
         {
             throw new NotImplementedException();
         }
+        public  virtual bool Reset()
+        {
+            throw new NotImplementedException();
+        }
+    
 
         public virtual Response ExecuteRequest(Request request)
         {

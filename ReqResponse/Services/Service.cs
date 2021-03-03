@@ -14,6 +14,7 @@ namespace ReqResponse.Services
 
         public override string ExecuteXMLRequest(string xmlRequest)
         {
+            IsActive = true;
             string xmlResponse = "";
             ExceptionHappen = false;
             // first deserialize xmlRequest
@@ -59,6 +60,7 @@ namespace ReqResponse.Services
                 xmlResponse = CreateNullResponse(result) ;
             }
             LastResult = result;
+            IsActive = false;
             return xmlResponse;
         }
     }

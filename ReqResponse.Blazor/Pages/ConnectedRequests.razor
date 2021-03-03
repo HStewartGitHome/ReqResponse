@@ -1,23 +1,24 @@
 ﻿@page "/connectedequests"
 
-@using ReqResponse.Models
-@inject ReqResponse.Blazor.Services.IRequestService service
+
+@inject ReqResponse.Middleware.Services.IRequestService service
+
 
 @if (string.IsNullOrWhiteSpace(messageString) == false)
 {
 <h3>Connected Requests @messageString</h3> }
-            else
-            {
+else
+{
 <h3>Connected Requests Started</h3>}
 
 @if (string.IsNullOrWhiteSpace(errorString) == false)
 {
 <div class="h2">@errorString</div> }
-            else if (responses is null)
-            {
+else if (responses is null)
+{
 <div class="h4">Loading...</div> }
-            else
-            {
+else
+{
 <table class="table table-striped">
     <thead class="thead-dark">
         <tr>
@@ -60,64 +61,69 @@
 </table>}
 
 @code { List<TestResponse> responses = null;
-            string errorString = "";
-            string messageString = "";
+    string errorString = "";
+    string messageString = "";
 
-            protected override async Task OnInitializedAsync()
-            {
-                bool working = true;
-                await Task.Yield();
-                responses = await service.ProcessRequest(true, Request_Option.StayConnected, 9999);
-                errorString = service.ErrorString;
-                service.RefreshRequested += RefreshMe;
+    protected override async Task OnInitializedAsync()
+    {
+        bool working = true;
+        await Task.Yield();
+        responses = await service.ProcessRequest(true, Request_Option.StayConnected, 9999);
+        errorString = service.ErrorString;
+        service.RefreshRequested += RefreshMe;
 
-                MakeMessageString(!service.IsNeedRequest());
+        MakeMessageString(!service.IsNeedRequest());
 
-                while (working)
-                {
-                    working = service.IsNeedRequest();
-                    await UpdateResponseAsync();
-                    errorString = service.ErrorString;
-                }
-                await service.Reset(true);
-            }
+        // Need a better way to handle this 
+        while (working)
+        {
+            working = service.IsNeedRequest();
+            await UpdateResponseAsync();
+            errorString = service.ErrorString;
+        }
+        service.Reset(true);
+        
 
-            public async Task UpdateResponseAsync()
-            {
-                if (service.IsNeedRequest())
-                {
-                    await Task.Yield();
-                    List<TestResponse> newResponses = await service.ProcessRequest(false, Request_Option.StayConnected, 9999);
-                    foreach (TestResponse resp in newResponses)
-                        responses.Add(resp);
+    }
 
-                    MakeMessageString(false);
-                    await Task.Delay(500);
-                }
-                else
-                {
-                    MakeMessageString(true);
-                    await Task.Yield();
-                    StateHasChanged();
+    public async Task UpdateResponseAsync()
+    {
+        if (service.IsNeedRequest())
+        {
+            await Task.Yield();
+            List<TestResponse> newResponses = await service.ProcessRequest(false, Request_Option.StayConnected, 9999);
+            foreach (TestResponse resp in newResponses)
+                responses.Add(resp);
 
-                }
-            }
+            MakeMessageString(false);
+            await Task.Delay(500);
+        }
+        else
+        {
+            MakeMessageString(true);
+            await Task.Yield();
+            StateHasChanged();
 
-            private void MakeMessageString(bool finish)
-            {
-                int count = responses.Count;
-                int max = service.MaxRequests;
-                if (count > max)
-                    max = count;
+        }
+    }
 
-                if (finish)
-                    messageString = "Finish Processing " + max.ToString() + " Requests";
-                else
-                    messageString = "Processing " + count.ToString() + " of " + max.ToString() + " Requests";
+    private void MakeMessageString(bool finish)
+    {
+        int count = responses.Count;
+        int max = service.MaxRequests;
+        if (count > max)
+            max = count;
 
-            }
+        if (finish)
+            messageString = "Finish Processing " + max.ToString() + " Requests";
+        else
+            messageString = "Processing " + count.ToString() + " of " + max.ToString() + " Requests";
 
-            private void RefreshMe()
-            {
-                StateHasChanged();
-            } }
+    }
+
+    private void RefreshMe()
+    {
+        StateHasChanged();
+    }
+
+ }

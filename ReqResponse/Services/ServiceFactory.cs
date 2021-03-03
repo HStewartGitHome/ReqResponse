@@ -2,7 +2,7 @@
 using ReqResponse.Services.Email;
 using ReqResponse.Services.XmlAPI;
 
-namespace ReqResponse.Blazor.Services
+namespace ReqResponse.Services
 {
     public class ServiceFactory : IServiceFactory
     {

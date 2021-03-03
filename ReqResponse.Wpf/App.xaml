@@ -1,0 +1,30 @@
+﻿<Application x:Class="ReqResponse.Wpf.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:ReqResponse.Wpf"
+             xmlns:views="clr-namespace:ReqResponse.Wpf.Views"
+             xmlns:viewmodels="clr-namespace:ReqResponse.Wpf.ViewModels">
+    <Application.Resources>
+        <DataTemplate DataType="{x:Type viewmodels:HomeViewModel}">
+            <views:HomeView/>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type viewmodels:LocalViewModel}">
+            <views:LocalView/>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type viewmodels:RemoteViewModel}">
+            <views:RemoteView/>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type viewmodels:ConnectedViewModel}">
+            <views:ConnectedView/>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type viewmodels:SummaryViewModel}">
+            <views:SummaryView/>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type viewmodels:ErrorsViewModel}">
+            <views:ErrorsView/>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type viewmodels:UnknownViewModel}">
+            <views:UnknownView/>
+        </DataTemplate>
+    </Application.Resources>
+</Application>

@@ -14,18 +14,18 @@ be replaced with a hardware device communicating via sockets.
 
 I have found in my struggle during the last six months that I must improve my
 knowledge of new technique because my previous job was behind the time in
-technology. But the internet can improve one’s knowledge and using experience
+Technology. But the internet can improve one’s knowledge and using experience
 from the past and knowledge of systems, we can create a reliable platform. We
 could use the end design on the hardware device and we can use the included unit
 test during build cycle but depending on additional hardware requirements. We
 could test the unit test code with the hardware or a simulated base on xml
 requirements.
 
-The Blazor application can be tested with QA department and reports will be
+We can test the Blazor application with QA department and reports will be
 stored in SQL database and if any issue comes up, it can be later determine
 because of testing or because of an actual change in code on the device that is
-connected via the socket connection. Any issues can be setup to email so that
-notification will be made.
+Connected via the socket connection. Any issues can be setup to email so that
+It will make notification to the user.
 
 Basic application design
 ========================
@@ -88,13 +88,21 @@ ways to test services.
 
 Requests are limited so that user interface to refresh.
 
-![Graphical user interface, text, application Description automatically generated](media/2c09c63a6fbe793e6e5afa9458d7b120.jpg)
+![Graphical user interface, text, application Description automatically generated](media/2d8b14aa8b856226a0f69227413ea9e2.jpg)
+
+Graphical user interface, text, application Description automatically generated
+
+Graphical user interface, text, application Description automatically generated
 
 For this example, local execution of methods is possible without the server. I
 did this first, and local requests are significantly faster than remote
 connections to a server.
 
 ![Table Description automatically generated](media/fb4d1bdc72a432c4b70192ae1219159e.jpg)
+
+Table Description automatically generated
+
+Table Description automatically generated
 
 Remote connections to server need special attention, I specifically the designed
 to methods not to use async connections to simulate communication with device.
@@ -111,12 +119,20 @@ Memory resident class for in-memory database service using dependency injection.
 
 ![Table Description automatically generated](media/1dc9518202b024c9ceeb6b5bd8dd2b24.jpg)
 
+Table Description automatically generated
+
+Table Description automatically generated
+
 Connected: This is an optimized version of Remote Request, where TcpClient and
 NetworkStream is kept open for the request.
 
 This reduces connection time.
 
 ![Table Description automatically generated](media/e7359ae3d31b2d7ecfd69b3bece55f75.jpg)
+
+Table Description automatically generated
+
+Table Description automatically generated
 
 To help isolated issues, a summary is used to display results with the following
 information
@@ -143,6 +159,10 @@ overruns.
 
 ![Graphical user interface, application Description automatically generated](media/27b386c5cdb3074f7bc556dabcb878c9.jpg)
 
+Graphical user interface, application Description automatically generated
+
+Graphical user interface, application Description automatically generated
+
 Once the screen is refreshed, it provides the error list on the screen showing
 the records which have errors. Here, there are two specific errors.
 
@@ -164,18 +184,34 @@ could mean that it has some network issues that will need to be a look at.
 
 ![Table Description automatically generated](media/888d0f13fb5fd8ecf665362e86373de9.jpg)
 
+Table Description automatically generated
+
+Table Description automatically generated
+
 With connected calls, it will switch to remote mode and only checks every 4
 requests instead 10.
 
 ![Table Description automatically generated with medium confidence](media/cbe4bce23e51102ae5ed3abc71869e63.jpg)
 
+Table Description automatically generated with medium confidence
+
+Table Description automatically generated with medium confidence
+
 If connection, resume it will return to normal after finish disconnected loop
 
 ![Table Description automatically generated](media/6099d38bf571ed02eaa564d04fc545c4.jpg)
 
+Table Description automatically generated
+
+Table Description automatically generated
+
 The system can report only errors with the following screen as below.
 
 ![Graphical user interface, application Description automatically generated](media/1049b4c49633c15bc6b784c4ef657e7d.jpg)
+
+Graphical user interface, application Description automatically generated
+
+Graphical user interface, application Description automatically generated
 
 Blazor Web Simulated default Requests
 =====================================
@@ -202,10 +238,18 @@ the following table. The actual requests is referenced by RequestId.
 
 ![Table Description automatically generated](media/40e1ae837ac30685bd0ac09acaeb0966.png)
 
+Table Description automatically generated
+
+Table Description automatically generated
+
 There is also a table that is used to calculate a summary for ResponseSetId,
 which is all rows in the Requests table.
 
 ![Table Description automatically generated](media/36a135a8c447ae14f751e27e64a87064.jpg)
+
+Table Description automatically generated
+
+Table Description automatically generated
 
 Blazor example Email
 ====================
@@ -222,6 +266,43 @@ Note Json files must be a change for your specific configuration.
 
 ![](media/ef4103c0130385d382fbf493b74de054.png)
 
+WPF Web Test application
+========================
+
+In addition, there is WPF client application that uses same servers with same
+services but screen are not as detail as Blazor application.
+
+The following screen is Home screen, which is same as Index screen in Blazor.
+
+![Graphical user interface, text, application, email Description automatically generated](media/e9f88f6f32e1dfe8e59922df15413b21.jpg)
+
+The following screen is use load local testing of requests.
+
+![Graphical user interface, application, table, Excel Description automatically generated](media/bb1f9cdb62e43ddb1860900dd3a9d2c9.jpg)
+
+The following screen is for remote requests, which means it connects and
+disconnects to each service request.
+
+![Table Description automatically generated](media/f4af1b9d8ad0295e203a2fecfb102fca.jpg)
+
+When remote requests finish, the following screen is displayed.
+
+![Graphical user interface, application, table, Excel Description automatically generated](media/889da0d678983eff25018aab53838eb9.jpg)
+
+The following is for connected screen which connects opens and keeps connected
+for 10 requests. It shows the following screen when finish.
+
+![Graphical user interface, table, Excel Description automatically generated](media/9a902dba6c59d58c9fcb29be6bd30a16.jpg)
+
+The following is summary, which currently only lists summary records without
+details.
+
+![Table Description automatically generated](media/c7a60ce2dd6a0b37d8a750602abfd307.jpg)
+
+The following screen shows errors and allows email if there are errors.
+
+![Graphical user interface, application, Word Description automatically generated](media/e79267e93b68db7f276c8ddc8c9ebb13.jpg)
+
 Updates
 =======
 
@@ -229,3 +310,6 @@ Updates
 
 02/26/2021 Updated Project for performance considerations and separating data
 and service layers from user interface.
+
+03/03/2021 Updated Project to include new WPF (.Net 5.0) client using same
+services and data.

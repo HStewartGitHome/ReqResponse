@@ -1,7 +1,7 @@
 ﻿@page "/remoterequests"
 
-@using ReqResponse.Models
-@inject ReqResponse.Blazor.Services.IRequestService service
+
+@inject ReqResponse.Middleware.Services.IRequestService service
 
 @if (string.IsNullOrWhiteSpace(messageString) == false)
 {
@@ -85,7 +85,7 @@ else
             await UpdateResponseAsync();
             errorString = service.ErrorString;
         }
-        await service.Reset(true);
+        service.Reset(true);
     }
 
     public async Task UpdateResponseAsync()

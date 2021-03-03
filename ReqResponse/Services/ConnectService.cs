@@ -22,6 +22,7 @@ namespace ReqResponse.Services
 
         public override string ExecuteXMLRequest(string xmlRequest)
         {
+            IsActive = true;
             if (PrivateOptions.DebugOption == Debug_Option.NetworkClientDataConsole)
                 Console.WriteLine($"ExecuteXMLRequest {DateTime.Now} Start....");
 
@@ -44,7 +45,9 @@ namespace ReqResponse.Services
             if (PrivateOptions.DebugOption == Debug_Option.NetworkClientDataConsole)
                 Console.WriteLine($"ExecuteXMLRequest {DateTime.Now} Finish....");
 
+            IsActive = false;
             return xml;
+           
         }
 
        
@@ -69,6 +72,24 @@ namespace ReqResponse.Services
             bool result = Client.Disconnect();
             await Task.Delay(0);
             return result; 
+        }
+
+
+        public override bool Reset()
+        {
+            if (Client.IsConnected())
+                Client.Disconnect();
+            return true;
+        }
+
+        public override async Task StopService()
+        {
+            IsStopping = true;
+            while (IsActive == true)
+            {
+                await Task.Delay(200);
+            }
+            Reset();
         }
     }
 }

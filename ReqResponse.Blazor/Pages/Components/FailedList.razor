@@ -1,19 +1,18 @@
 ﻿@page "/failedlist"
 
-@inject ReqResponse.Blazor.Services.IRequestService service
+
+@inject ReqResponse.Middleware.Services.IRequestService service
 
 
 @if (string.IsNullOrWhiteSpace(errorString) == false)
 {
-    <div class="h2">@errorString</div>
-}
-else if (responses is null)
-{
-    <div class="h4">Loading...</div>
-}
-else
-{
-    <div>
+<div class="h2">@errorString</div> }
+            else if (responses is null)
+            {
+<div class="h4">Loading...</div> }
+            else
+            {
+<div>
     <table class="table table-striped">
         <thead class="thead-dark">
             <tr>
@@ -38,39 +37,35 @@ else
             {
                 if (response != null)
                 {
-            <tr>
-                <th>@response.Id.ToString()</th>
-                <th>@response.RequestOption.ToString()</th>
-                <th>@response.Created.ToString()</th>
-                <td>@response.TimeExecuted.ToString()</td>
-                <th>@response.Success.ToString()</th>
-                <th>@response.ResponseSetId.ToString()</th>
-                <th>@response.Request.Id.ToString()</th>
-                <th>@response.Request.Method</th>
-                <th>@response.Request.Value1</th>
-                <th>@response.Request.Value2</th>
-                <th>@response.ActualValue</th>
-                <th>@response.Request.ExpectedValue</th>
-                <th>@response.Request.ExpectedResult.ToString()</th>
-                <th>@response.ActualResult.ToString()</th>
-            </tr>
+<tr>
+    <th>@response.Id.ToString()</th>
+    <th>@response.RequestOption.ToString()</th>
+    <th>@response.Created.ToString()</th>
+    <td>@response.TimeExecuted.ToString()</td>
+    <th>@response.Success.ToString()</th>
+    <th>@response.ResponseSetId.ToString()</th>
+    <th>@response.Request.Id.ToString()</th>
+    <th>@response.Request.Method</th>
+    <th>@response.Request.Value1</th>
+    <th>@response.Request.Value2</th>
+    <th>@response.ActualValue</th>
+    <th>@response.Request.ExpectedValue</th>
+    <th>@response.Request.ExpectedResult.ToString()</th>
+    <th>@response.ActualResult.ToString()</th>
+</tr>}
                 }
-            }
         </tbody>
     </table>
-    </div>
-}
+</div>}
 
-@code {
-    List<TestResponse> responses = null;
-    string errorString = "";
-    [Parameter]
-    public int ResponseSetId { get; set; }
+@code { List<TestResponse> responses = null;
+            string errorString = "";
+            [Parameter]
+            public int ResponseSetId { get; set; }
 
-    protected override async Task OnInitializedAsync()
-    {
-        responses = await service.GetFailedResponsesForSet(ResponseSetId);
-        errorString = service.ErrorString;
-        await Task.Yield();
-    }
-}
+            protected override async Task OnInitializedAsync()
+            {
+                responses = await service.GetFailedResponsesForSet(ResponseSetId);
+                errorString = service.ErrorString;
+                await Task.Yield();
+            } }

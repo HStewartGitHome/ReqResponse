@@ -1,29 +1,28 @@
 ﻿@page "/summarylist"
 
-@inject ReqResponse.Blazor.Services.IRequestService service
+@inject ReqResponse.Middleware.Services.IRequestService service
 
 <h3>Summary List</h3>
 
 @if (string.IsNullOrWhiteSpace(errorString) == false)
 {
 <div class="h2">@errorString</div> }
-            else if (responses is null)
-            {
+else if (responses is null)
+{
 <div class="h4">Loading...</div> }
-            else
-            {
+else
+{
 
-                <Virtualize Items="responses" Context="response">
-                        <Summary ResponseSetId="@response.ResponseSetId"></Summary>
-                </Virtualize>
-            }
+<Virtualize Items="responses" Context="response">
+    <Summary ResponseSetId="@response.ResponseSetId"></Summary>
+</Virtualize>            }
 
-    
 
-    @code { List<ResponseSummaryModel> responses = null;
-                    string errorString = "";
 
-            protected override async Task OnInitializedAsync()
-                {
-                    responses = await service.GetAllSummaryModels();
-                } }
+@code { List<ResponseSummaryModel> responses = null;
+    string errorString = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+        responses = await service.GetAllSummaryModels();
+    } }

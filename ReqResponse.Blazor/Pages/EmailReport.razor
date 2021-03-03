@@ -1,16 +1,14 @@
 ﻿@page "/emailreport"
-@inject ReqResponse.Blazor.Services.IRequestService service
-@inject NavigationManager navigationManager
 
+@inject ReqResponse.Middleware.Services.IRequestService service
+@inject NavigationManager navigationManager
 
 @if (string.IsNullOrWhiteSpace(errorString) == false)
 {
-    <div class="h2">@errorString</div>
-}
+<div class="h2">@errorString</div> }
 else if (report is null)
 {
-    <div class="h4">Loading...</div>
-}
+<div class="h4">Loading...</div> }
 else
 {
 
@@ -23,25 +21,22 @@ else
 
     @if (report.ErrorCount > 0)
     {
-        <button class="btn btn-primary" type="button" @onclick="OnReport">@report.Message</button>
+        <button class="btn btn-primary" type="button" @onclick="OnReport">@report.Message</button>}
     }
-}
 
-@code {
-    TestErrorReport report = null;
+@code { TestErrorReport report = null;
     string errorString = "";
 
     protected override async Task OnInitializedAsync()
     {
         await Task.Yield();
-        report = await service.GetTestErrorReport();
+        report = await service.GetTestErrorReportAsync();
         errorString = service.ErrorString;
 
     }
 
     private async Task OnReport()
     {
-        await service.EmailTestErrorReport();
+        await service.EmailTestErrorReportAsync();
         navigationManager.NavigateTo("/");
-    }
-}
+    } }

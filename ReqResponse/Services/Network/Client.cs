@@ -8,13 +8,15 @@ using System.Text;
 
 namespace ReqResponse.Services.Network
 {
-    public class Client
+    public static class Client
     {
-        public static string XmlResult { get; set; }
+        public static string XmlResult { get; set; } 
+        
 
         private static TcpClient CurrentClient = null;
         private static NetworkStream CurrentStream = null;
         private static readonly Options PrivateOptions = Factory.GetOptions();
+      
 
         public static bool SendRequest(string xml,
                                        string hostName,
@@ -31,8 +33,6 @@ namespace ReqResponse.Services.Network
 
             try
             {
-
-               
                 XmlResult = "";
                 if (CurrentClient != null)
                 {
@@ -245,6 +245,7 @@ namespace ReqResponse.Services.Network
             {
                 if (CurrentStream != null)
                     RemoveStream(CurrentStream);
+                CurrentStream = null;
                 result = CommonDisconnect(CurrentClient);
                 CurrentClient = null;
             }
@@ -273,6 +274,13 @@ namespace ReqResponse.Services.Network
             return true;
         }
 
+        public static bool IsConnected()
+        {
+            if ( ( CurrentClient == null ) || (CurrentStream == null) )
+                    return false;
+            else
+                return true;
+        }
      
     }
 }

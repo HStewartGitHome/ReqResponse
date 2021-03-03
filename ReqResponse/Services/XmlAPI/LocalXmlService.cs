@@ -29,6 +29,10 @@ namespace ReqResponse.Services.XmlAPI
             _service = new Service();
         }
 
+        public async Task StopService()
+        {
+            await _service.StopService();
+        }
 
         public async Task<bool>Connnect()
         {

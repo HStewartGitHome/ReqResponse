@@ -1,0 +1,29 @@
+﻿<UserControl x:Class="ReqResponse.Wpf.Views.HomeView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:ReqResponse.Wpf.Views"
+             mc:Ignorable="d" 
+             d:DesignHeight="800" d:DesignWidth="1200" Background="White">
+    <Grid>
+        <Canvas Background="{DynamicResource {x:Static SystemColors.ControlLightBrushKey}}">
+            <Label FontSize="36" HorizontalAlignment="Center" Content="Test Requests Home Screen" Canvas.Left="20" Canvas.Top="20" Background="{DynamicResource {x:Static SystemColors.ControlLightBrushKey}}"/>
+
+            <Label FontSize="24"  Canvas.Left="20" Canvas.Top="120" Content="This application is use to Test to server using xml sockets requests keep the sql database updated." Background="{DynamicResource {x:Static SystemColors.ControlLightBrushKey}}"/>
+            <Label FontSize="24"  Canvas.Left="20" Canvas.Top="180" Content="This applications has Local Request, Remote Requests to server which open connections and closes and" Background="{DynamicResource {x:Static SystemColors.ControlLightBrushKey}}"/>
+            <Label FontSize="24"  Canvas.Left="20" Canvas.Top="210" Content="Connected which uses same connection and stream." Background="{DynamicResource {x:Static SystemColors.ControlLightBrushKey}}"/>
+            <Label FontSize="24"  Canvas.Left="20" Canvas.Top="270" Content="DataLayor and Service layor is seperate dlls:" Background="{DynamicResource {x:Static SystemColors.ControlLightBrushKey}}"/>
+            <Label FontSize="24"  Canvas.Left="20" Canvas.Top="300" Content="---ReqResponse                       - Services layer" Background="{DynamicResource {x:Static SystemColors.ControlLightBrushKey}}"/>
+            <Label FontSize="24"  Canvas.Left="20" Canvas.Top="330" Content="---ReqResponse.WPF               - WPF User Interface layer" Background="{DynamicResource {x:Static SystemColors.ControlLightBrushKey}}"/>
+            <Label FontSize="24"  Canvas.Left="20" Canvas.Top="360" Content="---ReqResponse.Middleware   - Middleware layer" Background="{DynamicResource {x:Static SystemColors.ControlLightBrushKey}}"/>
+            <Label FontSize="24"  Canvas.Left="20" Canvas.Top="390" Content="---ReqResponse.DataLayer      - Data service layer" Background="{DynamicResource {x:Static SystemColors.ControlLightBrushKey}}"/>
+            <Label FontSize="24"  Canvas.Left="20" Canvas.Top="420" Content="---ReqResponse.Server            - xml network server" Background="{DynamicResource {x:Static SystemColors.ControlLightBrushKey}}"/>
+            <Label FontSize="24"  Canvas.Left="20" Canvas.Top="450" Content="---ReqResponse.Test                - NUnit test dll" Background="{DynamicResource {x:Static SystemColors.ControlLightBrushKey}}"/>
+            <Label FontSize="24"  Canvas.Left="20" Canvas.Top="520" Content="Also available:" Background="{DynamicResource {x:Static SystemColors.ControlLightBrushKey}}"/>
+            <Label FontSize="24"  Canvas.Left="20" Canvas.Top="550" Content="---ReqResponse.Blazor             - Blazor User Interface layer" Background="{DynamicResource {x:Static SystemColors.ControlLightBrushKey}}" />
+            <Label FontSize="24"  Canvas.Left="20" Canvas.Top="610" Content="The idea of this test is provided a way to test external devices though some communication type which in" Background="{DynamicResource {x:Static SystemColors.ControlLightBrushKey}}" />
+            <Label FontSize="24"  Canvas.Left="20" Canvas.Top="650" Content="this case is network and simulated with simple service to add, subtract, multiple and divide." Background="{DynamicResource {x:Static SystemColors.ControlLightBrushKey}}" />
+        </Canvas>
+    </Grid>
+</UserControl>

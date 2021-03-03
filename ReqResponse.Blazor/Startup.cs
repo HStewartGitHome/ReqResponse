@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using ReqResponse.Blazor.Services;
+using ReqResponse.Middleware.Services;
 using ReqResponse.DataLayer.Data;
 using ReqResponse.DataLayer.Data.Dapper;
 using ReqResponse.DataLayer.Data.Sim;
@@ -11,6 +11,7 @@ using ReqResponse.DataLayer.DataAccess;
 using ReqResponse.Models;
 using ReqResponse.Services.Email;
 using ReqResponse.Services.XmlAPI;
+using ReqResponse.Services;
 
 namespace ReqResponse.Blazor
 {

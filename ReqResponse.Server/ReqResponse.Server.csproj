@@ -6,6 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\ReqResponse.Middleware\ReqResponse.Middleware.csproj" />
     <ProjectReference Include="..\ReqResponse\ReqResponse.csproj" />
   </ItemGroup>
 

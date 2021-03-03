@@ -1,10 +1,11 @@
-﻿using ReqResponse.DataLayer.Models;
+﻿
+using ReqResponse.DataLayer.Models;
 using ReqResponse.Models;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace ReqResponse.Blazor.Services
+namespace ReqResponse.Middleware.Services
 {
     public interface IRequestService
     {
@@ -26,8 +27,9 @@ namespace ReqResponse.Blazor.Services
         Task<List<ResponseSummaryModel>> GetAllSummaryModels();
         Task<ResponseSummaryModel> GetReponseSummaryModelBySetId(int setId);
         Task<List<TestResponse>> GetFailedResponsesForSet(int setId);
-        Task EmailTestErrorReport();
-        Task<TestErrorReport> GetTestErrorReport();
-        Task Reset(bool remote);
+        Task EmailTestErrorReportAsync();
+        Task<TestErrorReport> GetTestErrorReportAsync();
+        void Reset(bool remote);
+        Task StopService();
     }
 }

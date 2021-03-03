@@ -8,38 +8,71 @@ namespace ReqResponse.Services.Network
 {
     public class Server
     {
+        public static Options options = null;
         public static void NewServer(int port)
         {
             // from Microsoft source
             // https://docs.microsoft.com/en-us/dotnet/api/system.net.sockets.tcplistener?redirectedfrom=MSDN&view=netframework-4.7.2
             TcpListener server = null;
-            IService service = new Service();
-            Options options = Factory.GetOptions();
+
+            options = Factory.GetOptions();
 
             try
             {
-                // Set the TcpListener on port 13000.
-                IPAddress localAddr = IPAddress.Parse("127.0.0.1");
+                server = StartListener("127.0.0.1", port);
 
-                // TcpListener server = new TcpListener(port);
-                server = new TcpListener(localAddr, port);
+               
 
-                // Start listening for client requests.
-                server.Start();
+                // Enter the listening loop.
+                while (true)
+                {
+                    if (RunListener(server) == true)
+                    {
+                        if (options.ServerDebugOption == Debug_Option.NetworkServerConnection)
+                            Console.Write("Succesfull Start Listener");
+                    }
+                    else
+                    {
+                        if (options.ServerDebugOption == Debug_Option.NetworkServerConnection)
+                            Console.Write("Listener failed to Start!!!!");
+
+                       server = StartListener("127.0.0.1", port);
+                    }
+   
+                }
+            }
+            catch (SocketException e)
+            {
+                Console.WriteLine($"SocketException: {e}");
+            }
+            finally
+            {
+                // Stop listening for new clients.
+                StopListener(server);
+            }
+        }
+
+        public static bool RunListener( TcpListener server)
+        {
+            bool result = false;
+            IService service = new Service();
+            TcpClient client = null;
+
+            try
+            {
+           
 
                 // Buffer for reading data
                 Byte[] bytes = new Byte[4096];
                 String data = null;
 
-                // Enter the listening loop.
-                while (true)
-                {
+
                     if (options.ServerDebugOption == Debug_Option.NetworkServerConnection)
                         Console.Write("Waiting for a connection... ");
 
                     // Perform a blocking call to accept requests.
                     // You could also use server.AcceptSocket() here.
-                    TcpClient client = server.AcceptTcpClient();
+                    client = server.AcceptTcpClient();
                     if (options.ServerDebugOption == Debug_Option.NetworkServerConnection)
                         Console.WriteLine("Connected!");
 
@@ -68,7 +101,7 @@ namespace ReqResponse.Services.Network
 
                     // Shutdown and end connection
                     client.Close();
-                }
+                result = true;
             }
             catch (SocketException e)
             {
@@ -76,9 +109,111 @@ namespace ReqResponse.Services.Network
             }
             finally
             {
-                // Stop listening for new clients.
+                // Stop client
+                if ( (result == false) && ( client != null ))
+                    client.Close();
+            }
+            return result;
+        }
+
+        public static TcpListener StartAListener( string name, 
+                                                 int port )
+        {
+            TcpListener server = null;
+
+
+            try
+            {
+                if (options.ServerDebugOption == Debug_Option.NetworkServerConnection)
+                    Console.Write("Starting Listener");
+
+                // Set the TcpListener on port 13000.
+                IPAddress localAddr = IPAddress.Parse(name);
+
+                // TcpListener server = new TcpListener(port);
+                server = new TcpListener(localAddr, port);
+
+                // Start listening for client requests.
+                server.Start();
+            }
+            catch (SocketException e)
+            {
+                Console.WriteLine($"SocketException: {e}");
+                server = null;
+            }
+            finally
+            {
+            }
+
+            return server;
+        }
+
+        public static TcpListener StartListener(string name,
+                                               int port)
+        {
+            TcpListener server = null;
+            int index = 0;
+            int count = 4;
+
+            try
+            {
+                while ((server == null) && (index < count))
+                {
+                    if (options.ServerDebugOption == Debug_Option.NetworkServerConnection)
+                        Console.Write("Starting Listener {index} of {count}");
+
+                    server = StartAListener(name, port);
+
+                    if (server == null)
+                    {
+                        if (options.ServerDebugOption == Debug_Option.NetworkServerConnection)
+                            Console.Write("Failed Start Listener {index} of {count}");
+                    }
+                    else
+                    {
+                        if (options.ServerDebugOption == Debug_Option.NetworkServerConnection)
+                            Console.Write("Successfully Started Listener {index} of {count}");
+
+                    }
+                }
+            }
+            catch (SocketException e)
+            {
+                Console.WriteLine($"SocketException: {e}");
+                server = null;
+            }
+            finally
+            {
+            }
+
+            return server;
+        }
+
+            public static void StopListener( TcpListener server )
+                                                 
+            {
+            Options options = Factory.GetOptions();
+
+    
+            try
+            {
+                if (options.ServerDebugOption == Debug_Option.NetworkServerConnection)
+                    Console.Write("Stopping Listener");
+
                 server.Stop();
+
+             
+
+            }
+            catch (SocketException e)
+            {
+                Console.WriteLine($"SocketException: {e}");
+            }
+            finally
+            {
             }
         }
+
     }
+
 }
