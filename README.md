@@ -21,11 +21,11 @@ test during build cycle but depending on additional hardware requirements. We
 could test the unit test code with the hardware or a simulated base on xml
 requirements.
 
-We can test the Blazor application with QA department and reports will be
-stored in SQL database and if any issue comes up, it can be later determine
-because of testing or because of an actual change in code on the device that is
-Connected via the socket connection. Any issues can be setup to email so that
-It will make notification to the user.
+We can test the Blazor application with QA department and reports will be stored
+in SQL database and if any issue comes up, it can be later determine because of
+testing or because of an actual change in code on the device that is Connected
+via the socket connection. Any issues can be setup to email so that It will make
+notification to the user.
 
 Basic application design
 ========================
@@ -88,21 +88,13 @@ ways to test services.
 
 Requests are limited so that user interface to refresh.
 
-![Graphical user interface, text, application Description automatically generated](media/2d8b14aa8b856226a0f69227413ea9e2.jpg)
-
-Graphical user interface, text, application Description automatically generated
-
-Graphical user interface, text, application Description automatically generated
+![](media/2d8b14aa8b856226a0f69227413ea9e2.jpg)
 
 For this example, local execution of methods is possible without the server. I
 did this first, and local requests are significantly faster than remote
 connections to a server.
 
-![Table Description automatically generated](media/fb4d1bdc72a432c4b70192ae1219159e.jpg)
-
-Table Description automatically generated
-
-Table Description automatically generated
+![](media/fb4d1bdc72a432c4b70192ae1219159e.jpg)
 
 Remote connections to server need special attention, I specifically the designed
 to methods not to use async connections to simulate communication with device.
@@ -117,22 +109,14 @@ Dapper Stored Procedures.
 
 Memory resident class for in-memory database service using dependency injection.
 
-![Table Description automatically generated](media/1dc9518202b024c9ceeb6b5bd8dd2b24.jpg)
-
-Table Description automatically generated
-
-Table Description automatically generated
+![](media/1dc9518202b024c9ceeb6b5bd8dd2b24.jpg)
 
 Connected: This is an optimized version of Remote Request, where TcpClient and
 NetworkStream is kept open for the request.
 
 This reduces connection time.
 
-![Table Description automatically generated](media/e7359ae3d31b2d7ecfd69b3bece55f75.jpg)
-
-Table Description automatically generated
-
-Table Description automatically generated
+![](media/e7359ae3d31b2d7ecfd69b3bece55f75.jpg)
 
 To help isolated issues, a summary is used to display results with the following
 information
@@ -157,11 +141,7 @@ The difference between Failed and Error is that ErrorCount are a programmatic
 test for a specific error, like divide by zero for divide operation or math
 overruns.
 
-![Graphical user interface, application Description automatically generated](media/27b386c5cdb3074f7bc556dabcb878c9.jpg)
-
-Graphical user interface, application Description automatically generated
-
-Graphical user interface, application Description automatically generated
+![](media/27b386c5cdb3074f7bc556dabcb878c9.jpg)
 
 Once the screen is refreshed, it provides the error list on the screen showing
 the records which have errors. Here, there are two specific errors.
@@ -182,36 +162,20 @@ FailedConnection and success is reported as false. This a not a problem on
 server, but that connection is not connected during the test. On the device, it
 could mean that it has some network issues that will need to be a look at.
 
-![Table Description automatically generated](media/888d0f13fb5fd8ecf665362e86373de9.jpg)
-
-Table Description automatically generated
-
-Table Description automatically generated
+![](media/888d0f13fb5fd8ecf665362e86373de9.jpg)
 
 With connected calls, it will switch to remote mode and only checks every 4
 requests instead 10.
 
-![Table Description automatically generated with medium confidence](media/cbe4bce23e51102ae5ed3abc71869e63.jpg)
-
-Table Description automatically generated with medium confidence
-
-Table Description automatically generated with medium confidence
+![](media/cbe4bce23e51102ae5ed3abc71869e63.jpg)
 
 If connection, resume it will return to normal after finish disconnected loop
 
-![Table Description automatically generated](media/6099d38bf571ed02eaa564d04fc545c4.jpg)
-
-Table Description automatically generated
-
-Table Description automatically generated
+![](media/6099d38bf571ed02eaa564d04fc545c4.jpg)
 
 The system can report only errors with the following screen as below.
 
-![Graphical user interface, application Description automatically generated](media/1049b4c49633c15bc6b784c4ef657e7d.jpg)
-
-Graphical user interface, application Description automatically generated
-
-Graphical user interface, application Description automatically generated
+![](media/1049b4c49633c15bc6b784c4ef657e7d.jpg)
 
 Blazor Web Simulated default Requests
 =====================================
@@ -236,20 +200,12 @@ routine CreateDefaultTestRequests
 When a test is performed using the Blaser application, it stores the results in
 the following table. The actual requests is referenced by RequestId.
 
-![Table Description automatically generated](media/40e1ae837ac30685bd0ac09acaeb0966.png)
-
-Table Description automatically generated
-
-Table Description automatically generated
+![](media/40e1ae837ac30685bd0ac09acaeb0966.png)
 
 There is also a table that is used to calculate a summary for ResponseSetId,
 which is all rows in the Requests table.
 
-![Table Description automatically generated](media/36a135a8c447ae14f751e27e64a87064.jpg)
-
-Table Description automatically generated
-
-Table Description automatically generated
+![](media/36a135a8c447ae14f751e27e64a87064.jpg)
 
 Blazor example Email
 ====================
@@ -270,38 +226,39 @@ WPF Web Test application
 ========================
 
 In addition, there is WPF client application that uses same servers with same
-services but screen are not as detail as Blazor application.
+services, but screen is not as detail as Blazor application. Application home
+grown MVVM and uses only .Net 5.0 packages.
 
 The following screen is Home screen, which is same as Index screen in Blazor.
 
-![Graphical user interface, text, application, email Description automatically generated](media/e9f88f6f32e1dfe8e59922df15413b21.jpg)
+![](media/8473123e167035c1fc9f44119b23918a.jpg)
 
 The following screen is use load local testing of requests.
 
-![Graphical user interface, application, table, Excel Description automatically generated](media/bb1f9cdb62e43ddb1860900dd3a9d2c9.jpg)
+![](media/bb1f9cdb62e43ddb1860900dd3a9d2c9.jpg)
 
 The following screen is for remote requests, which means it connects and
 disconnects to each service request.
 
-![Table Description automatically generated](media/f4af1b9d8ad0295e203a2fecfb102fca.jpg)
+![](media/f4af1b9d8ad0295e203a2fecfb102fca.jpg)
 
 When remote requests finish, the following screen is displayed.
 
-![Graphical user interface, application, table, Excel Description automatically generated](media/889da0d678983eff25018aab53838eb9.jpg)
+![](media/889da0d678983eff25018aab53838eb9.jpg)
 
 The following is for connected screen which connects opens and keeps connected
 for 10 requests. It shows the following screen when finish.
 
-![Graphical user interface, table, Excel Description automatically generated](media/9a902dba6c59d58c9fcb29be6bd30a16.jpg)
+![](media/9a902dba6c59d58c9fcb29be6bd30a16.jpg)
 
 The following is summary, which currently only lists summary records without
 details.
 
-![Table Description automatically generated](media/c7a60ce2dd6a0b37d8a750602abfd307.jpg)
+![](media/c7a60ce2dd6a0b37d8a750602abfd307.jpg)
 
 The following screen shows errors and allows email if there are errors.
 
-![Graphical user interface, application, Word Description automatically generated](media/e79267e93b68db7f276c8ddc8c9ebb13.jpg)
+![](media/e79267e93b68db7f276c8ddc8c9ebb13.jpg)
 
 Updates
 =======
