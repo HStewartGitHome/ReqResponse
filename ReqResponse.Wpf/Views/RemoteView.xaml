@@ -19,7 +19,7 @@
                 HorizontalAlignment="Left"
                 Margin="10,10,0,0"
                 VerticalAlignment="Stretch"
-                Loaded="DataGrid_LoadedAsync"/>
+                Loaded="DataGrid_Loaded"/>
         </Canvas>
     </Grid>
 </UserControl>

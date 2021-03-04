@@ -260,6 +260,14 @@ The following screen shows errors and allows email if there are errors.
 
 ![](media/e79267e93b68db7f276c8ddc8c9ebb13.jpg)
 
+ReqResponse.Command command line application
+============================================
+
+A command line application is provided, it designed so that it can be use when
+building a device or ROM and then verifying that it executes correctly.
+
+![](media/bc0232e15f3b0fda8fa713ebfe558f34.jpg)
+
 Updates
 =======
 
@@ -270,3 +278,6 @@ and service layers from user interface.
 
 03/03/2021 Updated Project to include new WPF (.Net 5.0) client using same
 services and data.
+
+03/04/2021 Updated Project to command line version
+

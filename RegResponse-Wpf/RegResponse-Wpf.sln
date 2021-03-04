@@ -13,6 +13,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ReqResponse.Server", "..\Re
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ReqResponse.Middleware", "..\ReqResponse.Middleware\ReqResponse.Middleware.csproj", "{6A7F825C-46EB-4B99-B1FC-D68E10D65D06}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ReqResponse.Command", "..\ReqResponse.Command\ReqResponse.Command.csproj", "{679286E8-AC57-4F32-BC15-285B6BEEB179}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{6A7F825C-46EB-4B99-B1FC-D68E10D65D06}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6A7F825C-46EB-4B99-B1FC-D68E10D65D06}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6A7F825C-46EB-4B99-B1FC-D68E10D65D06}.Release|Any CPU.Build.0 = Release|Any CPU
+		{679286E8-AC57-4F32-BC15-285B6BEEB179}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{679286E8-AC57-4F32-BC15-285B6BEEB179}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{679286E8-AC57-4F32-BC15-285B6BEEB179}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{679286E8-AC57-4F32-BC15-285B6BEEB179}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

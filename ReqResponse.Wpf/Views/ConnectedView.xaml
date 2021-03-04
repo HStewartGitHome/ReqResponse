@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:ReqResponse.Wpf.Views"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800" Unloaded="OnUnloadedAsync">
+             d:DesignHeight="450" d:DesignWidth="800" Unloaded="OnUnloaded">
     <Grid>
         <ContentControl Content="{Binding ConnectedViewModel}"/>
         <Canvas Background="{DynamicResource {x:Static SystemColors.ControlLightBrushKey}}">
@@ -19,7 +19,7 @@
                 HorizontalAlignment="Left"
                 Margin="10,10,0,0"
                 VerticalAlignment="Stretch"
-                Loaded="DataGrid_LoadedAsync"/>
+                Loaded="DataGrid_Loaded"/>
         </Canvas>
     </Grid>
 </UserControl>

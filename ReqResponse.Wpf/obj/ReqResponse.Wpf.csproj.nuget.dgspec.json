@@ -1,0 +1,343 @@
+{
+  "format": 1,
+  "restore": {
+    "C:\\SRC\\ReqResponse-master\\ReqResponse.Wpf\\ReqResponse.Wpf.csproj": {}
+  },
+  "projects": {
+    "C:\\SRC\\ReqResponse-master\\ReqResponse.DataLayor\\ReqResponse.DataLayer.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "C:\\SRC\\ReqResponse-master\\ReqResponse.DataLayor\\ReqResponse.DataLayer.csproj",
+        "projectName": "ReqResponse.DataLayer",
+        "projectPath": "C:\\SRC\\ReqResponse-master\\ReqResponse.DataLayor\\ReqResponse.DataLayer.csproj",
+        "packagesPath": "C:\\Users\\hstew\\.nuget\\packages\\",
+        "outputPath": "C:\\SRC\\ReqResponse-master\\ReqResponse.DataLayor\\obj\\",
+        "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Microsoft\\Xamarin\\NuGet\\"
+        ],
+        "configFilePaths": [
+          "C:\\Users\\hstew\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Xamarin.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "net5.0"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "https://api.nuget.org/v3/index.json": {},
+          "https://nuget.devexpress.com/P6hTFT3KG9Rh4ORcTLG3gdBuxShzICnS6bcCVWIfex5xmtR6I3/api": {}
+        },
+        "frameworks": {
+          "net5.0": {
+            "targetAlias": "net5.0",
+            "projectReferences": {
+              "C:\\SRC\\ReqResponse-master\\ReqResponse\\ReqResponse.csproj": {
+                "projectPath": "C:\\SRC\\ReqResponse-master\\ReqResponse\\ReqResponse.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "net5.0": {
+          "targetAlias": "net5.0",
+          "dependencies": {
+            "Dapper": {
+              "target": "Package",
+              "version": "[2.0.78, )"
+            },
+            "Microsoft.Extensions.Configuration.Abstractions": {
+              "target": "Package",
+              "version": "[5.0.0, )"
+            },
+            "Microsoft.Extensions.Logging": {
+              "target": "Package",
+              "version": "[5.0.0, )"
+            },
+            "System.Data.SqlClient": {
+              "target": "Package",
+              "version": "[4.8.2, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.103\\RuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "C:\\SRC\\ReqResponse-master\\ReqResponse.Middleware\\ReqResponse.Middleware.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "C:\\SRC\\ReqResponse-master\\ReqResponse.Middleware\\ReqResponse.Middleware.csproj",
+        "projectName": "ReqResponse.Middleware",
+        "projectPath": "C:\\SRC\\ReqResponse-master\\ReqResponse.Middleware\\ReqResponse.Middleware.csproj",
+        "packagesPath": "C:\\Users\\hstew\\.nuget\\packages\\",
+        "outputPath": "C:\\SRC\\ReqResponse-master\\ReqResponse.Middleware\\obj\\",
+        "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Microsoft\\Xamarin\\NuGet\\"
+        ],
+        "configFilePaths": [
+          "C:\\Users\\hstew\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Xamarin.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "net5.0"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "https://api.nuget.org/v3/index.json": {},
+          "https://nuget.devexpress.com/P6hTFT3KG9Rh4ORcTLG3gdBuxShzICnS6bcCVWIfex5xmtR6I3/api": {}
+        },
+        "frameworks": {
+          "net5.0": {
+            "targetAlias": "net5.0",
+            "projectReferences": {
+              "C:\\SRC\\ReqResponse-master\\ReqResponse.DataLayor\\ReqResponse.DataLayer.csproj": {
+                "projectPath": "C:\\SRC\\ReqResponse-master\\ReqResponse.DataLayor\\ReqResponse.DataLayer.csproj"
+              },
+              "C:\\SRC\\ReqResponse-master\\ReqResponse\\ReqResponse.csproj": {
+                "projectPath": "C:\\SRC\\ReqResponse-master\\ReqResponse\\ReqResponse.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "net5.0": {
+          "targetAlias": "net5.0",
+          "dependencies": {
+            "Microsoft.Extensions.Configuration.Abstractions": {
+              "target": "Package",
+              "version": "[5.0.0, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.103\\RuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "C:\\SRC\\ReqResponse-master\\ReqResponse.Wpf\\ReqResponse.Wpf.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "C:\\SRC\\ReqResponse-master\\ReqResponse.Wpf\\ReqResponse.Wpf.csproj",
+        "projectName": "ReqResponse.Wpf",
+        "projectPath": "C:\\SRC\\ReqResponse-master\\ReqResponse.Wpf\\ReqResponse.Wpf.csproj",
+        "packagesPath": "C:\\Users\\hstew\\.nuget\\packages\\",
+        "outputPath": "C:\\SRC\\ReqResponse-master\\ReqResponse.Wpf\\obj\\",
+        "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Microsoft\\Xamarin\\NuGet\\"
+        ],
+        "configFilePaths": [
+          "C:\\Users\\hstew\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Xamarin.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "net5.0-windows7.0"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "https://api.nuget.org/v3/index.json": {},
+          "https://nuget.devexpress.com/P6hTFT3KG9Rh4ORcTLG3gdBuxShzICnS6bcCVWIfex5xmtR6I3/api": {}
+        },
+        "frameworks": {
+          "net5.0-windows7.0": {
+            "targetAlias": "net5.0-windows",
+            "projectReferences": {
+              "C:\\SRC\\ReqResponse-master\\ReqResponse.DataLayor\\ReqResponse.DataLayer.csproj": {
+                "projectPath": "C:\\SRC\\ReqResponse-master\\ReqResponse.DataLayor\\ReqResponse.DataLayer.csproj"
+              },
+              "C:\\SRC\\ReqResponse-master\\ReqResponse.Middleware\\ReqResponse.Middleware.csproj": {
+                "projectPath": "C:\\SRC\\ReqResponse-master\\ReqResponse.Middleware\\ReqResponse.Middleware.csproj"
+              },
+              "C:\\SRC\\ReqResponse-master\\ReqResponse\\ReqResponse.csproj": {
+                "projectPath": "C:\\SRC\\ReqResponse-master\\ReqResponse\\ReqResponse.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "net5.0-windows7.0": {
+          "targetAlias": "net5.0-windows",
+          "dependencies": {
+            "Microsoft.Extensions.Hosting": {
+              "target": "Package",
+              "version": "[5.0.0, )"
+            },
+            "Microsoft.Extensions.Hosting.Abstractions": {
+              "target": "Package",
+              "version": "[5.0.0, )"
+            },
+            "Microsoft.Extensions.Logging": {
+              "target": "Package",
+              "version": "[5.0.0, )"
+            },
+            "Microsoft.Extensions.Logging.Abstractions": {
+              "target": "Package",
+              "version": "[5.0.0, )"
+            },
+            "Microsoft.Extensions.Logging.Console": {
+              "target": "Package",
+              "version": "[5.0.0, )"
+            },
+            "Microsoft.Extensions.Logging.Debug": {
+              "target": "Package",
+              "version": "[5.0.0, )"
+            },
+            "Microsoft.VisualStudio.Utilities": {
+              "target": "Package",
+              "version": "[16.7.30329.38, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            },
+            "Microsoft.WindowsDesktop.App": {
+              "privateAssets": "none"
+            },
+            "Microsoft.WindowsDesktop.App.WPF": {
+              "privateAssets": "none"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.103\\RuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "C:\\SRC\\ReqResponse-master\\ReqResponse\\ReqResponse.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "C:\\SRC\\ReqResponse-master\\ReqResponse\\ReqResponse.csproj",
+        "projectName": "ReqResponse",
+        "projectPath": "C:\\SRC\\ReqResponse-master\\ReqResponse\\ReqResponse.csproj",
+        "packagesPath": "C:\\Users\\hstew\\.nuget\\packages\\",
+        "outputPath": "C:\\SRC\\ReqResponse-master\\ReqResponse\\obj\\",
+        "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Microsoft\\Xamarin\\NuGet\\"
+        ],
+        "configFilePaths": [
+          "C:\\Users\\hstew\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Xamarin.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "net5.0"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "https://api.nuget.org/v3/index.json": {},
+          "https://nuget.devexpress.com/P6hTFT3KG9Rh4ORcTLG3gdBuxShzICnS6bcCVWIfex5xmtR6I3/api": {}
+        },
+        "frameworks": {
+          "net5.0": {
+            "targetAlias": "net5.0",
+            "projectReferences": {}
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "net5.0": {
+          "targetAlias": "net5.0",
+          "dependencies": {
+            "MailKit": {
+              "target": "Package",
+              "version": "[2.10.1, )"
+            },
+            "Microsoft.Extensions.Logging": {
+              "target": "Package",
+              "version": "[5.0.0, )"
+            },
+            "System.Text.Encoding": {
+              "target": "Package",
+              "version": "[4.3.0, )"
+            },
+            "System.Xml.XmlSerializer": {
+              "target": "Package",
+              "version": "[4.3.0, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.103\\RuntimeIdentifierGraph.json"
+        }
+      }
+    }
+  }
+}

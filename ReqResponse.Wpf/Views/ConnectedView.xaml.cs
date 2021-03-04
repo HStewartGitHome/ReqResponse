@@ -24,7 +24,7 @@ namespace ReqResponse.Wpf.Views
             InitializeComponent();
         }
 
-        private async void DataGrid_LoadedAsync(object sender, RoutedEventArgs e)
+        private async void DataGrid_Loaded(object sender, RoutedEventArgs e)
         {
             _model = (ConnectedViewModel)DataContext;
             if (_service == null)
@@ -91,7 +91,7 @@ namespace ReqResponse.Wpf.Views
             TheGrid.ItemsSource = _model.TestResponseModelList;
         }
 
-        private async void OnUnloadedAsync(object sender, RoutedEventArgs e)
+        private async void OnUnloaded(object sender, RoutedEventArgs e)
         {
             if (_service != null)
                 await _service.StopService();

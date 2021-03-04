@@ -105,115 +105,123 @@ namespace ReqResponse.Middleware.Services
                                                              int requestLimit)
         {
             List<TestResponse> responses = new List<TestResponse>();
-            List<TestRequest> takenRequests = new List<TestRequest>();
-            int Id = await GetNextResponseID();
-            Request_Option processReqOption = reqOption;
 
-            await InitializeServices();
-
-            FirstRequest = firstRequest;
-            if ((firstRequest && (Requests != null)))
+            try
             {
-                Requests = null;
-            }
+                List<TestRequest> takenRequests = new List<TestRequest>();
+                int Id = await GetNextResponseID();
+                Request_Option processReqOption = reqOption;
 
-            if (Requests == null)
-                Requests = await InitializeRequests();
+                await InitializeServices();
 
-            if (firstRequest)
-            {
-                ActiveRequests = Requests;
-                MaxRequests = Requests.Count;
-                TakenRequests = 0;
-                ResponseSetId = await GetResponseSetID();
-            }
-
-            DateTime created = DateTime.Now;
-            if (reqOption == Request_Option.StayConnected)
-            {
-                if (_options.DebugOption == Debug_Option.NetworkClientDataConsole)
-                    Console.WriteLine($"Client {DateTime.Now} doing connect for StayConnected");
-
-                created = DateTime.Now;
-                if (await _serviceFactory.GetConnectedService().Connnect() == false)
+                FirstRequest = firstRequest;
+                if ((firstRequest && (Requests != null)))
                 {
-                    // if we can't connect than switch to connected mode
-                    if (_options.DebugOption == Debug_Option.NetworkClientDataConsole)
-                        Console.WriteLine($"Client {DateTime.Now} failed for StayConnected switchig to Connected");
-
-                    processReqOption = Request_Option.Connected;
+                    Requests = null;
                 }
-            }
 
-            requestLimit = GetRequestLimit(processReqOption);
+                if (Requests == null)
+                    Requests = await InitializeRequests();
 
-            int limit = requestLimit;
-            if (ActiveRequests.Count < limit)
-                limit = ActiveRequests.Count;
-            for (int index = 0; index < limit; index++)
-            {
-                if (processReqOption == Request_Option.Connected)
+                if (firstRequest)
+                {
+                    ActiveRequests = Requests;
+                    MaxRequests = Requests.Count;
+                    TakenRequests = 0;
+                    ResponseSetId = await GetResponseSetID();
+                }
+
+                DateTime created = DateTime.Now;
+                if (reqOption == Request_Option.StayConnected)
                 {
                     if (_options.DebugOption == Debug_Option.NetworkClientDataConsole)
-                        Console.WriteLine($"Client {DateTime.Now} doing connect for Connected");
+                        Console.WriteLine($"Client {DateTime.Now} doing connect for StayConnected");
 
                     created = DateTime.Now;
-                    await _serviceFactory.GetConnectedService().Connnect();
-                }
-                else if (index > 0)
-                    created = DateTime.Now;
+                    if (await _serviceFactory.GetConnectedService().Connnect() == false)
+                    {
+                        // if we can't connect than switch to connected mode
+                        if (_options.DebugOption == Debug_Option.NetworkClientDataConsole)
+                            Console.WriteLine($"Client {DateTime.Now} failed for StayConnected switchig to Connected");
 
-                TestRequest request = ActiveRequests[index];
-                TestResponse response = await ProcessRequest(request, created, processReqOption);
-                if (response != null)
+                        processReqOption = Request_Option.Connected;
+                    }
+                }
+
+                requestLimit = GetRequestLimit(processReqOption);
+
+                int limit = requestLimit;
+                if (ActiveRequests.Count < limit)
+                    limit = ActiveRequests.Count;
+                for (int index = 0; index < limit; index++)
                 {
-                    response.Id = Id++;
-                    response.ResponseSetId = ResponseSetId;
-                    response.RequestOption = reqOption;
+                    if (processReqOption == Request_Option.Connected)
+                    {
+                        if (_options.DebugOption == Debug_Option.NetworkClientDataConsole)
+                            Console.WriteLine($"Client {DateTime.Now} doing connect for Connected");
 
-                    responses.Add(response);
+                        created = DateTime.Now;
+                        await _serviceFactory.GetConnectedService().Connnect();
+                    }
+                    else if (index > 0)
+                        created = DateTime.Now;
 
-                    if (RemoteRequest)
-                        takenRequests.Add(request);
+                    TestRequest request = ActiveRequests[index];
+                    TestResponse response = await ProcessRequest(request, created, processReqOption);
+                    if (response != null)
+                    {
+                        response.Id = Id++;
+                        response.ResponseSetId = ResponseSetId;
+                        response.RequestOption = reqOption;
+
+                        responses.Add(response);
+
+                        if (RemoteRequest)
+                            takenRequests.Add(request);
+                    }
+                    else
+                    {
+                        if (_options.DebugOption == Debug_Option.NetworkClientDataConsole)
+                            Console.WriteLine($"Client {DateTime.Now} terminating loop");
+                        index = limit;
+                    }
+
+                    if (processReqOption == Request_Option.Connected)
+                    {
+                        if (_options.DebugOption == Debug_Option.NetworkClientDataConsole)
+                            Console.WriteLine($"Client {DateTime.Now} doing disconnect for Connected");
+
+                        await _serviceFactory.GetConnectedService().Disconnnect();
+                    }
                 }
-                else
+
+                if (reqOption == Request_Option.StayConnected)
                 {
                     if (_options.DebugOption == Debug_Option.NetworkClientDataConsole)
-                        Console.WriteLine($"Client {DateTime.Now} terminating loop");
-                    index = limit;
-                }
-
-                if (processReqOption == Request_Option.Connected)
-                {
-                    if (_options.DebugOption == Debug_Option.NetworkClientDataConsole)
-                        Console.WriteLine($"Client {DateTime.Now} doing disconnect for Connected");
+                        Console.WriteLine($"Client {DateTime.Now} doing disconnect for StayConnected");
 
                     await _serviceFactory.GetConnectedService().Disconnnect();
                 }
-            }
 
-            if (reqOption == Request_Option.StayConnected)
-            {
+                foreach (TestRequest request in takenRequests)
+                    ActiveRequests.Remove(request);
+                TakenRequests += takenRequests.Count;
+
                 if (_options.DebugOption == Debug_Option.NetworkClientDataConsole)
-                    Console.WriteLine($"Client {DateTime.Now} doing disconnect for StayConnected");
+                    Console.WriteLine($"Client {DateTime.Now} reqOption is {reqOption} befor Calling Request Refresh");
 
-                await _serviceFactory.GetConnectedService().Disconnnect();
+                if ((reqOption == Request_Option.Connected) || (reqOption == Request_Option.StayConnected))
+                {
+                    CallRequestRefresh();
+                }
+
+                if (responses.Count > 0)
+                    await SaveResponse(responses);
             }
-
-            foreach (TestRequest request in takenRequests)
-                ActiveRequests.Remove(request);
-            TakenRequests += takenRequests.Count;
-
-            if (_options.DebugOption == Debug_Option.NetworkClientDataConsole)
-                Console.WriteLine($"Client {DateTime.Now} reqOption is {reqOption} befor Calling Request Refresh");
-
-            if ((reqOption == Request_Option.Connected) || (reqOption == Request_Option.StayConnected))
+            catch( Exception e )
             {
-                CallRequestRefresh();
+                Console.WriteLine($"Exception processing requests {e}");
             }
-
-            if (responses.Count > 0)
-                await SaveResponse(responses);
             return responses;
         }
 

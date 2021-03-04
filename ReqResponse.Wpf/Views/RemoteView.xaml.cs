@@ -24,7 +24,7 @@ namespace ReqResponse.Wpf.Views
             InitializeComponent();
         }
 
-        private async void DataGrid_LoadedAsync(object sender, RoutedEventArgs e)
+        private async void DataGrid_Loaded(object sender, RoutedEventArgs e)
         {
             _model = (RemoteViewModel)DataContext;
 

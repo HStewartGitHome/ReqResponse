@@ -12,7 +12,6 @@ namespace ReqResponse.Wpf.Commands
         private readonly IRootViewModelFactory _viewModelFactory;
         private readonly MainViewModel _mainViewModel;
         private ViewType _currentViewType = ViewType.Unknown;
-      
 
         public UpdateViewCommand(IRootViewModelFactory viewModelFactory,
                                    MainViewModel mainViewModel)
@@ -20,8 +19,6 @@ namespace ReqResponse.Wpf.Commands
             _viewModelFactory = viewModelFactory;
             _mainViewModel = mainViewModel;
         }
-
-      
 
         public event EventHandler CanExecuteChanged;
 
@@ -32,7 +29,6 @@ namespace ReqResponse.Wpf.Commands
 
         public void Execute(object parameter)
         {
-
             ViewType viewType = GetViewTypeFromString((string)parameter);
             if (viewType != _currentViewType)
             {
