@@ -13,6 +13,7 @@ namespace ReqResponse.Middleware.Services.Client
 
         public int TakenRequests { get; set; }
         public int MaxRequests { get; set; }
+        public string ErrorString { get; set; }
 
         public TestRequestServiceClient(IRequestService service)
         {
@@ -43,19 +44,20 @@ namespace ReqResponse.Middleware.Services.Client
             List<TestResponse> list = await _service.ProcessRequest(true, Request_Option.Local, 9999);
             TakenRequests = _service.TakenRequests;
             MaxRequests = _service.MaxRequests;
+            ErrorString = _service.ErrorString;
             return list;
         }
 
         public List<TestResponse> LoadLocalTestResponses()
         {
-            List<TestResponse> list = new List<TestResponse>();
+            List<TestResponse> list = new();
 
             return list;
         }
 
         public async Task<List<TestResponse>> LoadRemoteTestResponseAsync(bool firstTime)
         {
-            List<TestResponse> list = new List<TestResponse>();
+            List<TestResponse> list = new();
 
             try
             {
@@ -68,6 +70,7 @@ namespace ReqResponse.Middleware.Services.Client
                 list = await _service.ProcessRequest(firstTime, Request_Option.Connected, 9999);
                 TakenRequests = _service.TakenRequests;
                 MaxRequests = _service.MaxRequests;
+                ErrorString = _service.ErrorString;
 
                 if (IsNeedRequest() == true)
                     CallUpdateRequested();
@@ -81,7 +84,7 @@ namespace ReqResponse.Middleware.Services.Client
 
         public async Task<List<TestResponse>> LoadConnectedTestResponseAsync(bool firstTime)
         {
-            List<TestResponse> list = new List<TestResponse>();
+            List<TestResponse> list = new();
 
             try
             {
@@ -94,6 +97,7 @@ namespace ReqResponse.Middleware.Services.Client
                 list = await _service.ProcessRequest(firstTime, Request_Option.StayConnected, 9999);
                 TakenRequests = _service.TakenRequests;
                 MaxRequests = _service.MaxRequests;
+                ErrorString = _service.ErrorString;
 
                 if (IsNeedRequest() == true)
                     CallUpdateRequested();
@@ -131,6 +135,7 @@ namespace ReqResponse.Middleware.Services.Client
 
         public bool Reset(bool remote)
         {
+            IsStopping = true;
             if (_service == null)
                 return false;
             _service.Reset(remote);
@@ -157,10 +162,33 @@ namespace ReqResponse.Middleware.Services.Client
         {
 
             List<ResponseSummaryModel> responses = await _service.GetAllSummaryModels();
+            MaxRequests = responses.Count;
+            ErrorString = _service.ErrorString;
             return responses;
         }
 
+        public async Task<ResponseSummaryModel> GetReponseSummaryModelBySetIdAsync(int id)
+        {
+
+            ResponseSummaryModel response = await _service.GetReponseSummaryModelBySetId(id);
+            MaxRequests = 1;
+            ErrorString = _service.ErrorString;
+            return response;
+        }
+
         #endregion ResponseSummaryModels methods
+
+
+        #region Failed Response methods
+        public async Task<List<TestResponse>> GetFailedResponsesForSetAsync(int id)
+        {
+            List<TestResponse> list = await _service.GetFailedResponsesForSet(id);
+            TakenRequests = _service.TakenRequests;
+            MaxRequests = _service.MaxRequests;
+            ErrorString = _service.ErrorString;
+            return list;
+        }
+        #endregion
 
         #region TestErrorReport
 

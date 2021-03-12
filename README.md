@@ -39,8 +39,8 @@ Divide.
 First part was to create ReqResponse.dll which contains the 4 methods, common
 xml models and service to process the methods. There are basically two methods:
 a local method and connected network method. The communications to the server
-are done with a latest technique from Microsoft, which can be found with the
-following link for server.
+are based on techniques from Microsoft but upgraded to .net Core, which can be
+found with the following link for server.
 
 <https://docs.microsoft.com/en-us/dotnet/api/system.net.sockets.tcplistener?redirectedfrom=MSDN&view=netframework-4.7.2>
 
@@ -51,11 +51,22 @@ And for the client
 ReqResponse. Service.exe is a simple command line server, which calls a routine
 in ReqResponse.dll
 
-![](media/82b71518a128dba098ceb2300f3de868.png)
+![](media/b4cb34e6663d8735ecc4c7e86a531161.png)
+
+The following sample appsettings.json for server configuration settings.
+
+![](media/756da10e9e544b95df18f70186ae5777.jpg)
 
 With server code logging turn on, the following is output
 
 ![](media/539f19fbac2b49c22ed38f2211c7e227.png)
+
+In addition, I have created ReqResponse.BackupServer which if ReqResponse.Server
+is down, the client will switch to the Backup Server – but once it comes primary
+server comes back up it will switch back. I have found that TcpClient connection
+times are around 2 seconds. Depending on what is being connected if would be
+better for performance reasons to use Stay Connected mode which only connects
+for the first connections. But if down it switches to open / disconnect mode.
 
 Connected ReqResponse.Test is a MSTest project is possible with Test Explorer.
 The of Test project Connected is not available and Remote is off by default and
@@ -88,7 +99,11 @@ ways to test services.
 
 Requests are limited so that user interface to refresh.
 
-![](media/2d8b14aa8b856226a0f69227413ea9e2.jpg)
+![](media/61a18efa2959a2cafc24fdc6f06b543c.jpg)
+
+The following screen is home screen for same applications as Blazor Web Assembly
+
+![](media/6b871bfbb5d9f6a1e83bfb633af82f25.png)
 
 For this example, local execution of methods is possible without the server. I
 did this first, and local requests are significantly faster than remote
@@ -280,4 +295,6 @@ and service layers from user interface.
 services and data.
 
 03/04/2021 Updated Project to command line version
+
+03/12/2021 Updated Add Blazor Webassembly plus backup server for requests
 

@@ -1,0 +1,39 @@
+﻿@page "/summarylist"
+
+@inject HttpClient Http
+
+<h3>Summary List</h3>
+
+@if (string.IsNullOrWhiteSpace(errorString) == false)
+{
+<div class="h2">@errorString</div> }
+else if (responses is null)
+{
+<div class="h4">Loading...</div> }
+else
+{
+
+    
+<Virtualize Items="responses" Context="response">
+<Summary ResponseSetId="@response.ResponseSetId"></Summary>
+</Virtualize>
+    
+        }
+
+
+
+@code { 
+    List<ResponseSummaryModel> responses = null;
+    string errorString = "";
+    TestViewModel model = null;
+
+    protected override async Task OnInitializedAsync()
+    {
+        string str = "SummaryRequests?param=load";
+        model = await Http.GetFromJsonAsync<TestViewModel>(str);
+        responses = model.Summaries;
+
+        errorString = model.ErrorString;
+    }
+}
+

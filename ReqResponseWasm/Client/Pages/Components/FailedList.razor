@@ -1,0 +1,103 @@
+﻿
+@page "/failedlist"
+
+
+@inject HttpClient Http
+
+
+@if (string.IsNullOrWhiteSpace(errorString) == false)
+{
+<div class="h2">@errorString</div> }
+else if (responses is null)
+{
+<div class="h4">Loading...</div> }
+else
+{
+<div>
+    <table class="table table-striped">
+        <thead class="thead-dark">
+            <tr>
+                <th>Id</th>
+                <th>Request Option</th>
+                <td>Created</td>
+                <td>Time Executed</td>
+                <td>Success</td>
+                <th>Response SetId</th>
+                <td>RequestId</td>
+                <th>Method</th>
+                <th>Value1</th>
+                <th>Value2</th>
+                <th>Value</th>
+                <th>Actual Value</th>
+                <th>Expected Result</th>
+                <th>Actual Result</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var response in responses)
+            {
+                if (response != null)
+                {
+<tr>
+    <th>@response.Id.ToString()</th>
+    <th>@response.RequestOption.ToString()</th>
+    <th>@response.Created.ToString()</th>
+    <td>@response.TimeExecuted.ToString()</td>
+    <th>@response.Success.ToString()</th>
+    <th>@response.ResponseSetId.ToString()</th>
+    <th>@response.Request.Id.ToString()</th>
+    <th>@response.Request.Method</th>
+    <th>@response.Request.Value1</th>
+    <th>@response.Request.Value2</th>
+    <th>@response.ActualValue</th>
+    <th>@response.Request.ExpectedValue</th>
+    <th>@response.Request.ExpectedResult.ToString()</th>
+    <th>@response.ActualResult.ToString()</th>
+</tr>
+}
+}
+        </tbody>
+    </table>
+</div>}
+
+@code { List<TestResponse> responses = null;
+    string errorString = "";
+    TestViewModel model = null;
+
+    [Parameter]
+    public int ResponseSetId { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        int tryCount = 1;
+        string str = $"SummaryRequests?param=failed,{ResponseSetId}";
+
+        bool result = await SendRequest(str, tryCount++);
+        if (result == false)
+            result = await SendRequest(str, tryCount++);
+    }
+
+    internal async Task<bool> SendRequest(string str, int tryCount)
+    {
+        bool result = false;
+
+        try
+        {
+
+            model = await Http.GetFromJsonAsync<TestViewModel>(str);
+            responses = model.Responses;
+            errorString = model.ErrorString;
+            result = true;
+        }
+        catch (HttpRequestException ex)
+        {
+            errorString = $"Http RequestException {tryCount} with GetFromJsonAsync ex: {ex}";
+        }
+        catch (Exception ex)
+        {
+            errorString = $"Exception {tryCount} with GetFromJsonAsync ex: {ex}";
+        }
+        return result;
+
+    }
+}

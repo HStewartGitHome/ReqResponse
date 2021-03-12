@@ -9,9 +9,9 @@ namespace ReqResponse.Command.Services
 {
     public class ProcessRemoteTestRequestService
     {
-        private readonly ITestRequestServiceClient _serviceClient;
+        private readonly ITestModelRequestServiceClient _serviceClient;
 
-        public ProcessRemoteTestRequestService(ITestRequestServiceClient serviceClient)
+        public ProcessRemoteTestRequestService(ITestModelRequestServiceClient serviceClient)
         {
             _serviceClient = serviceClient;
         }
@@ -20,12 +20,12 @@ namespace ReqResponse.Command.Services
         {
             Console.WriteLine($"Processing Remote Test Request Service {Parameters.Test} DoEmail {Parameters.DoEmail}");
 
-            List<TestResponse> list = await _serviceClient.LoadRemoteTestResponseAsync(true);
-            while (_serviceClient.IsNeedRequest() == true)
+            var model = await _serviceClient.LoadRemoteTestResponseAsync(true);
+            while (model.IsNeedRequest() == true)
             {
-                list = await _serviceClient.LoadRemoteTestResponseAsync(false);
+                model = await _serviceClient.LoadRemoteTestResponseAsync(false);
             }
-            _serviceClient.Reset(true);
+            await _serviceClient.ResetAsync(true);
 
             return true;
         }

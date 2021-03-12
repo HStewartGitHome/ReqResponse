@@ -24,6 +24,7 @@ namespace ReqResponse.Middleware.Services
         private readonly IConfiguration _configuration = null;
         private readonly IDataServiceFactory _dataFactory = null;
         private readonly IServiceFactory _serviceFactory = null;
+        private readonly ServerConfiguration _serverConfiguration = null;
         private readonly Options _options = null;
 
         #endregion Private Variables
@@ -45,20 +46,23 @@ namespace ReqResponse.Middleware.Services
         public IResponseSummaryDataService SqlResponseSummaryDataService { get; set; } = null;
         public IResponseSummaryDataService SimResponseSummaryDataService { get; set; } = null;
 
-        public event Action RefreshRequested;
+  
 
         #endregion Public Variables
 
         #region Constructor
 
         public RequestService(IConfiguration configuration,
+                              ServerConfiguration serverConfiguration,
                               IDataServiceFactory dataFactory,
                               IServiceFactory serviceFactory)
         {
             _configuration = configuration;
+            _serverConfiguration = serverConfiguration;
             _dataFactory = dataFactory;
             _serviceFactory = serviceFactory;
             _options = new Options();
+            _options.SetServer(_serverConfiguration, true);
             MaxRequests = 0;
             TakenRequests = 0;
             ErrorString = "";
@@ -66,17 +70,6 @@ namespace ReqResponse.Middleware.Services
 
         #endregion Constructor
 
-        #region Public CallRequestRefresh
-
-        public void CallRequestRefresh()
-        {
-            if (_options.DebugOption == Debug_Option.NetworkClientDataConsole)
-                Console.WriteLine($"Client {DateTime.Now} invoking RefrshRequested");
-
-            RefreshRequested?.Invoke();
-        }
-
-        #endregion Public CallRequestRefresh
 
         #region Public Reset
 
@@ -114,6 +107,17 @@ namespace ReqResponse.Middleware.Services
 
                 await InitializeServices();
 
+                int requestCount = 0;
+                if (Requests != null)
+                    requestCount = Requests.Count;
+                int activeRequestCount = 0;
+                if (ActiveRequests != null)
+                    activeRequestCount = ActiveRequests.Count;
+
+                //if (_options.DebugOption == Debug_Option.NetworkClientDataConsole)
+                    Console.WriteLine($"Client {DateTime.Now} firstRequest: {firstRequest} RequestCount: { requestCount} ActiveRequestCount: {activeRequestCount}");
+
+
                 FirstRequest = firstRequest;
                 if ((firstRequest && (Requests != null)))
                 {
@@ -134,18 +138,16 @@ namespace ReqResponse.Middleware.Services
                 DateTime created = DateTime.Now;
                 if (reqOption == Request_Option.StayConnected)
                 {
-                    if (_options.DebugOption == Debug_Option.NetworkClientDataConsole)
-                        Console.WriteLine($"Client {DateTime.Now} doing connect for StayConnected");
+
+                    AttemptPrimarySwitchBack();
+
+               
 
                     created = DateTime.Now;
-                    if (await _serviceFactory.GetConnectedService().Connnect() == false)
-                    {
-                        // if we can't connect than switch to connected mode
-                        if (_options.DebugOption == Debug_Option.NetworkClientDataConsole)
-                            Console.WriteLine($"Client {DateTime.Now} failed for StayConnected switchig to Connected");
-
-                        processReqOption = Request_Option.Connected;
-                    }
+                    processReqOption = await ProcessConnect(Request_Option.StayConnected,
+                                                            Request_Option.Connected);
+               
+                    
                 }
 
                 requestLimit = GetRequestLimit(processReqOption);
@@ -157,11 +159,16 @@ namespace ReqResponse.Middleware.Services
                 {
                     if (processReqOption == Request_Option.Connected)
                     {
+                        if ( index == 0 )
+                            AttemptPrimarySwitchBack();
+
                         if (_options.DebugOption == Debug_Option.NetworkClientDataConsole)
                             Console.WriteLine($"Client {DateTime.Now} doing connect for Connected");
 
                         created = DateTime.Now;
-                        await _serviceFactory.GetConnectedService().Connnect();
+                        processReqOption = await ProcessConnect(Request_Option.Connected,
+                                                                Request_Option.Connected);
+                      
                     }
                     else if (index > 0)
                         created = DateTime.Now;
@@ -177,7 +184,11 @@ namespace ReqResponse.Middleware.Services
                         responses.Add(response);
 
                         if (RemoteRequest)
+                        {
+                            if (_options.DebugOption == Debug_Option.NetworkClientDataConsole)
+                                Console.WriteLine($"Client {DateTime.Now} Adding request {request.Id} to count of {takenRequests.Count}");
                             takenRequests.Add(request);
+                        }
                     }
                     else
                     {
@@ -205,16 +216,16 @@ namespace ReqResponse.Middleware.Services
 
                 foreach (TestRequest request in takenRequests)
                     ActiveRequests.Remove(request);
+
+                if (_options.DebugOption == Debug_Option.NetworkClientDataConsole)
+                    Console.WriteLine($"Client {DateTime.Now} Adding count of {takenRequests.Count} to count of {TakenRequests}");
+
                 TakenRequests += takenRequests.Count;
 
                 if (_options.DebugOption == Debug_Option.NetworkClientDataConsole)
                     Console.WriteLine($"Client {DateTime.Now} reqOption is {reqOption} befor Calling Request Refresh");
 
-                if ((reqOption == Request_Option.Connected) || (reqOption == Request_Option.StayConnected))
-                {
-                    CallRequestRefresh();
-                }
-
+                
                 if (responses.Count > 0)
                     await SaveResponse(responses);
             }
@@ -226,6 +237,65 @@ namespace ReqResponse.Middleware.Services
         }
 
         #endregion Public ProcessRequest (main)
+
+        private void AttemptPrimarySwitchBack()
+        {
+            if (_options.DebugOption == Debug_Option.NetworkClientDataConsole)
+                Console.WriteLine($"Client {DateTime.Now} Checking if can PrimarySwitchBack: {_serverConfiguration.PrimarySwitchBack} OpPrimary: {_serverConfiguration.OnPrimary}");
+
+            if ((_serverConfiguration.PrimarySwitchBack == true) && (_serverConfiguration.OnPrimary == false))
+            {
+
+                _serverConfiguration.OnPrimary = true;
+                _options.SetServer(_serverConfiguration, true);
+
+                if (_options.DebugOption == Debug_Option.NetworkClientDataConsole)
+                    Console.WriteLine($"Client {DateTime.Now} attempting to switch back to primay using host {_options.HostName} on Port {_options.Port}");
+
+            }
+        }
+
+        private async Task<Request_Option> ProcessConnect( Request_Option reqOption,
+                                                           Request_Option retOption)
+        {
+            Request_Option result = reqOption;
+
+            if (await _serviceFactory.GetConnectedService().Connnect(_options.HostName, _options.Port) == false)
+            {
+                // if we can't connect than switch to connected mode
+
+
+                if (_serverConfiguration.AllowBackup == true)
+                {
+                    if (_options.DebugOption == Debug_Option.NetworkClientDataConsole)
+                        Console.WriteLine($"Client {DateTime.Now} doing connect for StayConnected on backup");
+
+                    _serverConfiguration.OnPrimary = false;
+                    _options.SetServer(_serverConfiguration, false);
+
+                    if (_options.DebugOption == Debug_Option.NetworkClientDataConsole)
+                        Console.WriteLine($"Client {DateTime.Now} using backup on host {_options.HostName} on Port {_options.Port}");
+
+                    if (await _serviceFactory.GetConnectedService().Connnect(_options.HostName, _options.Port) == false)
+                    {
+
+                        if (_options.DebugOption == Debug_Option.NetworkClientDataConsole)
+                            Console.WriteLine($"Client {DateTime.Now} failed for StayConnected  with backup switching to Connected");
+
+                        result = Request_Option.Connected;
+                    }
+
+                }
+                else
+                {
+                    if (_options.DebugOption == Debug_Option.NetworkClientDataConsole)
+                        Console.WriteLine($"Client {DateTime.Now} failed for StayConnected with primary switching to Connected");
+                    retOption = Request_Option.Connected;
+                }
+            }
+
+            return result;
+        }
 
         #region Private ProcessRequest
 
@@ -593,7 +663,7 @@ namespace ReqResponse.Middleware.Services
                     summary.ErrorCount++;
 
                 summary.TimeExecuted += response.TimeExecuted;
-                Console.WriteLine($"RequestOption: {response.RequestOption}  Response Time: {response.TimeExecuted}  Total Time: {summary.TimeExecuted}  OkCount:  {summary.OkCount} ErrorCount: {summary.ErrorCount}");
+                Console.WriteLine($"RequestOption: {response.RequestOption} Id {response.RequestId} Response Time: {response.TimeExecuted}  Total Time: {summary.TimeExecuted}  OkCount:  {summary.OkCount} ErrorCount: {summary.ErrorCount}");
                 summary.RequestOption = response.RequestOption;
             }
         }

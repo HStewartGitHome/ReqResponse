@@ -24,10 +24,10 @@ namespace ReqResponse.Wpf.Views
         {
 
             _model = (SummaryViewModel)DataContext;
-            ITestRequestServiceClient service = TestRequesteServiceClientFactory.CreateService();
-            List<ResponseSummaryModel> list = await service.LoadResponseSummaryModelsAsync();
+            ITestModelRequestServiceClient service = TestModelRequestServiceClientFactory.CreateService();
+            var testModel = await service.LoadResponseSummaryModelsAsync();
 
-            UpdateList(list);
+            UpdateList(testModel.Summaries);
         }
 
 

@@ -1,8 +1,8 @@
 ﻿@page "/connectedequests"
+@implements IAsyncDisposable
 
 
-@inject ReqResponse.Middleware.Services.IRequestService service
-
+@inject ReqResponse.Middleware.Services.Client.ITestModelRequestServiceClient service
 
 @if (string.IsNullOrWhiteSpace(messageString) == false)
 {
@@ -60,70 +60,81 @@ else
     </tbody>
 </table>}
 
-@code { List<TestResponse> responses = null;
+@code { 
+    List<TestResponse> responses = null;
     string errorString = "";
     string messageString = "";
+    TestViewModel model = null;
+    TestViewModel model2 = null;
+    int MaxRequests;
+    static bool working = true;
 
     protected override async Task OnInitializedAsync()
     {
-        bool working = true;
+
         await Task.Yield();
-        responses = await service.ProcessRequest(true, Request_Option.StayConnected, 9999);
-        errorString = service.ErrorString;
-        service.RefreshRequested += RefreshMe;
+        model = await service.LoadConnectedTestResponseAsync(true);
+        responses = model.Responses;
+        errorString = model.ErrorString;
+        MaxRequests = model.MaxRequests;
 
-        MakeMessageString(!service.IsNeedRequest());
+        MakeMessageString(!model.IsNeedRequest());
+        StateHasChanged();
+        await Task.Delay(200);
 
-        // Need a better way to handle this 
+        // Need a better way to handle this
+        working = true;
         while (working)
         {
-            working = service.IsNeedRequest();
-            await UpdateResponseAsync();
-            errorString = service.ErrorString;
-        }
-        service.Reset(true);
-        
-
-    }
-
-    public async Task UpdateResponseAsync()
-    {
-        if (service.IsNeedRequest())
-        {
             await Task.Yield();
-            List<TestResponse> newResponses = await service.ProcessRequest(false, Request_Option.StayConnected, 9999);
-            foreach (TestResponse resp in newResponses)
-                responses.Add(resp);
+            model2 = await service.LoadConnectedTestResponseAsync(false);
+            model.AddResponses(model2.Responses);
 
-            MakeMessageString(false);
-            await Task.Delay(500);
-        }
-        else
-        {
-            MakeMessageString(true);
-            await Task.Yield();
+            responses = model.Responses;
+            errorString = model.ErrorString;
+            if ( working )
+                working = model.IsNeedRequest();
+            MakeMessageString(!working);
             StateHasChanged();
-
+            await Task.Delay(200);
         }
+        model2 = await service.ResetAsync(true);
+
+        errorString = model2.ErrorString;
+
     }
+
+
 
     private void MakeMessageString(bool finish)
     {
         int count = responses.Count;
-        int max = service.MaxRequests;
+        int max = model.MaxRequests;
+        int currentMax = model.CurrentMaxRequests;
+        int taken = model.CurrentTakenRequests;
         if (count > max)
             max = count;
 
         if (finish)
-            messageString = "Finish Processing " + max.ToString() + " Requests";
+            messageString = $"Finish Processing {max}  Requests";
         else
-            messageString = "Processing " + count.ToString() + " of " + max.ToString() + " Requests";
-
+            messageString = $"Processing {count} of {max} Requests";
     }
 
     private void RefreshMe()
     {
         StateHasChanged();
     }
+    public void Dispose()
+    {
+        working = false;
+    }
 
- }
+    public async ValueTask DisposeAsync()
+    {
+        working = false;
+        var model = await service.ResetAsync(true);
+    }
+
+
+    }

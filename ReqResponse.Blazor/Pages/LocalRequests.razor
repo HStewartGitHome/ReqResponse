@@ -1,7 +1,7 @@
 ﻿@page "/localrequests"
 
 
-@inject ReqResponse.Middleware.Services.IRequestService service
+@inject ReqResponse.Middleware.Services.Client.ITestModelRequestServiceClient service
 
 @if (string.IsNullOrWhiteSpace(messageString) == false)
 {
@@ -59,28 +59,31 @@
     </tbody>
 </table>}
 
-@code { List<TestResponse> responses = null;
-            string errorString = "";
-            string messageString = "";
+@code { 
+    List<TestResponse> responses = null;
+    string errorString = "";
+    string messageString = "";
+    TestViewModel model = null;
 
-            protected override async Task OnInitializedAsync()
-            {
-                responses = await service.ProcessRequest(true, Request_Option.Local, 9999);
-                errorString = service.ErrorString;
-                MakeMessageString(true);
+    protected override async Task OnInitializedAsync()
+    {
+        model = await service.LoadLocalTestResponseAsync();
+        responses = model.Responses;
 
-            }
+        errorString = model.ErrorString;
+        MakeMessageString(true);
+    }
 
-            private void MakeMessageString(bool finish)
-            {
-                int count = responses.Count;
-                int max = service.MaxRequests;
-                if (count > max)
-                    max = count;
+    private void MakeMessageString(bool finish)
+    {
+        int count = model.Responses.Count;
+        int max = model.MaxRequests;
+        if (count > max)
+            max = count;
 
-                if (finish)
-                    messageString = "Finish Processing " + max.ToString() + " Requests";
-                else
-                    messageString = "Processing " + count.ToString() + " of " + max.ToString() + " Requests";
+        if (finish)
+            messageString = "Finish Processing " + max.ToString() + " Requests";
+        else
+            messageString = "Processing " + count.ToString() + " of " + max.ToString() + " Requests";
 
-            } }
+    } }

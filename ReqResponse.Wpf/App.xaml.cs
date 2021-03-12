@@ -38,6 +38,7 @@ namespace ReqResponse.Wpf
             IRequestService requestService = _host.Services.GetRequiredService<IRequestService>();
 
             TestRequesteServiceClientFactory.SetService(requestService);
+            TestModelRequestServiceClientFactory.SetService(requestService);
 
             Window window = _host.Services.GetRequiredService<MainWindow>();
 

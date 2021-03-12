@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "ReqResponse.Command": {
+      "commandName": "Project",
+      "commandLineArgs": "-r -r"
+    }
+  }
+}

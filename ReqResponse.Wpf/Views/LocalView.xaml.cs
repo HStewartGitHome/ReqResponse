@@ -23,11 +23,12 @@ namespace ReqResponse.Wpf.Views
         private async void DataGrid_Loaded(object sender, RoutedEventArgs e)
         {
             _model = (LocalViewModel)DataContext;
-            ITestRequestServiceClient service = TestRequesteServiceClientFactory.CreateService();
-            List<TestResponse> list = await service.LoadLocalTestResponseAsync();
-            _model.MaxRequests = service.MaxRequests;
+            ITestModelRequestServiceClient service = TestModelRequestServiceClientFactory.CreateService();
+            var testModel = await service.LoadLocalTestResponseAsync();
+            _model.MaxRequests = testModel.MaxRequests;
 
-            UpdateList(list);
+
+            UpdateList(testModel.Responses);
         }
 
         private void UpdateList(List<TestResponse> list)

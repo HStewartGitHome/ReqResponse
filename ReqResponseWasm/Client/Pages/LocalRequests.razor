@@ -1,0 +1,89 @@
+﻿@page "/localrequests"
+
+@inject HttpClient Http
+
+@if (string.IsNullOrWhiteSpace(messageString) == false)
+{
+<h3>Local Requests @messageString</h3> }
+else
+{
+<h3>Local Requests Started</h3>}
+
+@if (string.IsNullOrWhiteSpace(errorString) == false)
+{
+<div class="h2">@errorString</div> }
+else if (responses is null)
+{
+<div class="h4">Loading...</div> }
+else
+{
+<table class="table table-striped">
+    <thead class="thead-dark">
+        <tr>
+            <th>Id</th>
+            <th>Request Option</th>
+            <td>Created</td>
+            <td>Time Executed</td>
+            <td>Success</td>
+            <th>Response SetId</th>
+            <td>Request Id</td>
+            <th>Method</th>
+            <th>Value1</th>
+            <th>Value2</th>
+            <th>Value</th>
+            <th>Actual Value</th>
+            <th>Expected Result</th>
+            <th>Actual Result</th>
+        </tr>
+    </thead>
+    <tbody>
+        <Virtualize Items="responses" Context="response">
+            <tr>
+                <th>@response.Id.ToString()</th>
+                <th>@response.RequestOption.ToString()</th>
+                <th>@response.Created.ToString()</th>
+                <th>@response.TimeExecuted.ToString()</th>
+                <th>@response.Success.ToString()</th>
+                <th>@response.ResponseSetId.ToString()</th>
+                <th>@response.Request.Id.ToString()</th>
+                <th>@response.Request.Method</th>
+                <th>@response.Request.Value1</th>
+                <th>@response.Request.Value2</th>
+                <th>@response.ActualValue</th>
+                <th>@response.Request.ExpectedValue</th>
+                <th>@response.Request.ExpectedResult.ToString()</th>
+                <th>@response.ActualResult.ToString()</th>
+            </tr>
+        </Virtualize>
+    </tbody>
+</table>}
+
+@code { 
+    List<TestResponse> responses = null;
+    string errorString = "";
+    string messageString = "";
+    TestViewModel model = null;
+
+    protected override async Task OnInitializedAsync()
+    {
+        model = await Http.GetFromJsonAsync<TestViewModel>("LocalRequests");
+        responses = model.Responses;
+
+        errorString = model.ErrorString;
+        MakeMessageString(true);
+
+    }
+
+    private void MakeMessageString(bool finish)
+    {
+        int count = model.Responses.Count;
+        int max = model.MaxRequests;
+        if (count > max)
+            max = count;
+
+        if (finish)
+            messageString = "Finish Processing " + max.ToString() + " Requests";
+        else
+            messageString = "Processing " + count.ToString() + " of " + max.ToString() + " Requests";
+
+    } }

@@ -1,17 +1,16 @@
 ﻿@page "/failedlist"
 
-
-@inject ReqResponse.Middleware.Services.IRequestService service
+@inject ReqResponse.Middleware.Services.Client.ITestModelRequestServiceClient service
 
 
 @if (string.IsNullOrWhiteSpace(errorString) == false)
 {
 <div class="h2">@errorString</div> }
-            else if (responses is null)
-            {
+else if (responses is null)
+{
 <div class="h4">Loading...</div> }
-            else
-            {
+else
+{
 <div>
     <table class="table table-striped">
         <thead class="thead-dark">
@@ -52,20 +51,24 @@
     <th>@response.Request.ExpectedValue</th>
     <th>@response.Request.ExpectedResult.ToString()</th>
     <th>@response.ActualResult.ToString()</th>
-</tr>}
-                }
+</tr>
+}
+}
         </tbody>
     </table>
 </div>}
 
 @code { List<TestResponse> responses = null;
-            string errorString = "";
-            [Parameter]
-            public int ResponseSetId { get; set; }
+    string errorString = "";
+    TestViewModel model = null;
 
-            protected override async Task OnInitializedAsync()
-            {
-                responses = await service.GetFailedResponsesForSet(ResponseSetId);
-                errorString = service.ErrorString;
-                await Task.Yield();
-            } }
+    [Parameter]
+    public int ResponseSetId { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        model = await service.GetFailedResponsesForSetAsync(ResponseSetId);
+        responses = model.Responses;
+        errorString = model.ErrorString;
+        await Task.Delay(200);
+    } }

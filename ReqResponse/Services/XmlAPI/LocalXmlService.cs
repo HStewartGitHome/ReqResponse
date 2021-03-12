@@ -34,7 +34,8 @@ namespace ReqResponse.Services.XmlAPI
             await _service.StopService();
         }
 
-        public async Task<bool>Connnect()
+        public async Task<bool>Connnect(string hostName, 
+                                        int port)
         {
             await Task.Delay(0);
             return false;

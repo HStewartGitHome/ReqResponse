@@ -15,7 +15,7 @@ namespace ReqResponse.Services.Network
 
         private static TcpClient CurrentClient = null;
         private static NetworkStream CurrentStream = null;
-        private static readonly Options PrivateOptions = Factory.GetOptions();
+        private static readonly Options PrivateOptions = ConfigFactory.GetOptions();
       
 
         public static bool SendRequest(string xml,
@@ -151,15 +151,6 @@ namespace ReqResponse.Services.Network
                     if (PrivateOptions.DebugOption == Debug_Option.NetworkClientDataConsole)
                         Console.WriteLine($"Client {DateTime.Now} after Connect");
 
-                    /*
-                     var resultClient = tcpClient.BeginConnect(hostName, port, null, null);
-                     if (_Options.DebugOption == Debug_Option.NetworkClientDataConsole)
-                         Console.WriteLine($"Client {DateTime.Now} after BeginConnect");
-
-                     var success = resultClient.AsyncWaitHandle.WaitOne(TimeSpan.FromSeconds(1));
-                     if (_Options.DebugOption == Debug_Option.NetworkClientDataConsole)
-                         Console.WriteLine($"Client {DateTime.Now} after WaitOne");
-                     */
                 }
 
 

@@ -26,7 +26,8 @@ namespace ReqResponse.Services
             await Task.Delay(0);
         }
 
-        public virtual Task<bool> Connnect()
+        public virtual Task<bool> Connnect(string hostName,
+                                           int port)
         {
             throw new NotImplementedException();
         }

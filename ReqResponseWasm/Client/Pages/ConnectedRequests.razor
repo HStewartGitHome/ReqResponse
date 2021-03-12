@@ -1,0 +1,135 @@
+﻿@page "/connectedequests"
+@implements IAsyncDisposable
+
+@inject HttpClient Http
+
+
+@if (string.IsNullOrWhiteSpace(messageString) == false)
+{
+    <h3>Connected Requests @messageString</h3> }
+else
+{
+    <h3>Connected Requests Started</h3>}
+
+@if (string.IsNullOrWhiteSpace(errorString) == false)
+{
+    <div class="h2">@errorString</div> }
+else if (responses is null)
+{
+    <div class="h4">Loading...</div> }
+else
+{
+    <table class="table table-striped">
+        <thead class="thead-dark">
+            <tr>
+                <th>Id</th>
+                <th>Request Option</th>
+                <td>Created</td>
+                <td>Time Executed</td>
+                <td>Success</td>
+                <td>Response SetId</td>
+                <td>Request Id</td>
+                <th>Method</th>
+                <th>Value1</th>
+                <th>Value2</th>
+                <th>Value</th>
+                <th>Actual Value</th>
+                <th>Expected Result</th>
+                <th>Actual Result</th>
+            </tr>
+        </thead>
+        <tbody>
+            <Virtualize Items="responses" Context="response">
+                <tr>
+                    <th>@response.Id.ToString()</th>
+                    <th>@response.RequestOption.ToString()</th>
+                    <th>@response.Created.ToString()</th>
+                    <th>@response.TimeExecuted.ToString()</th>
+                    <th>@response.Success.ToString()</th>
+                    <th>@response.ResponseSetId.ToString()</th>
+                    <th>@response.Request.Id.ToString()</th>
+                    <th>@response.Request.Method</th>
+                    <th>@response.Request.Value1</th>
+                    <th>@response.Request.Value2</th>
+                    <th>@response.ActualValue</th>
+                    <th>@response.Request.ExpectedValue</th>
+                    <th>@response.Request.ExpectedResult.ToString()</th>
+                    <th>@response.ActualResult.ToString()</th>
+                </tr>
+            </Virtualize>
+        </tbody>
+    </table>}
+
+@code { List<TestResponse> responses = null;
+    string errorString = "";
+    string messageString = "";
+    TestViewModel model = null;
+    TestViewModel model2 = null;
+    int MaxRequests;
+    static bool working = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+
+        await Task.Yield();
+        model = await Http.GetFromJsonAsync<TestViewModel>("ConnectedRequests?param=true");
+        responses = model.Responses;
+        errorString = model.ErrorString;
+        MaxRequests = model.MaxRequests;
+
+        MakeMessageString(!model.IsNeedRequest());
+        StateHasChanged();
+        await Task.Delay(200);
+
+        // Need a better way to handle this
+        working = true;
+        while (working)
+        {
+            await Task.Yield();
+            model2 = await Http.GetFromJsonAsync<TestViewModel>("ConnectedRequests?param=false");
+            model.AddResponses(model2.Responses);
+
+            responses = model.Responses;
+            errorString = model.ErrorString;
+            if ( working )
+                working = model.IsNeedRequest();
+            MakeMessageString(!working);
+            StateHasChanged();
+            await Task.Delay(200);
+        }
+        model2 = await Http.GetFromJsonAsync<TestViewModel>("ConnectedRequests?param=reset");
+        errorString = model2.ErrorString;
+
+    }
+
+
+
+    private void MakeMessageString(bool finish)
+    {
+        int count = responses.Count;
+        int max = model.MaxRequests;
+        int currentMax = model.CurrentMaxRequests;
+        int taken = model.CurrentTakenRequests;
+        if (count > max)
+            max = count;
+
+        if (finish)
+            messageString = $"Finish Processing {max}  Requests";
+        else
+            messageString = $"Processing {count} of {max} Requests";
+
+    }
+
+    public void Dispose()
+    {
+        working = false;
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        working = false;
+
+        var model = await Http.GetFromJsonAsync<TestViewModel>("ConnectedRequests?param=reset");
+    }
+
+}

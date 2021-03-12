@@ -10,7 +10,8 @@ namespace ReqResponse.Services
         bool ExceptionHappen { get; set; }
         bool IsStopping { get; set; }
 
-        Task<bool> Connnect();
+        Task<bool> Connnect(string hostName,
+                            int port);
         Task<bool> Disconnnect();
         Response ExecuteRequest(Request request);
 

@@ -9,6 +9,7 @@ namespace ReqResponse.Middleware.Services.Client
     {
         int TakenRequests { get; set; }
         int MaxRequests { get; set; }
+        string ErrorString { get; set; }
 
         event Action UpdateRequested;
 
@@ -25,5 +26,7 @@ namespace ReqResponse.Middleware.Services.Client
         Task<TestErrorReport> GetTestErrorReportAsync();
         Task EmailTestErrorReportAsync();
         Task StopService();
+        Task<ResponseSummaryModel> GetReponseSummaryModelBySetIdAsync(int id);
+        Task<List<TestResponse>> GetFailedResponsesForSetAsync(int id);
     }
 }

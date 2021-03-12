@@ -1,7 +1,8 @@
 ﻿@page "/errorlist"
 
 
-@inject ReqResponse.Middleware.Services.IRequestService service
+@inject ReqResponse.Middleware.Services.Client.ITestModelRequestServiceClient service
+
 
 <h3>Error List</h3>
 
@@ -21,10 +22,15 @@ else
 @code { List<ResponseSummaryModel> responses = null;
     List<int> idList = null;
     string errorString = "";
+    TestViewModel model = null;
 
     protected override async Task OnInitializedAsync()
     {
-        responses = await service.GetAllSummaryModels();
+        model = await service.LoadResponseSummaryModelsAsync();
+        responses = model.Summaries;
+        errorString = model.ErrorString;
+
+
         if (responses != null)
         {
             idList = new List<int>();

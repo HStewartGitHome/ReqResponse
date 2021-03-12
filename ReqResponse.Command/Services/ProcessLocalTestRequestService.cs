@@ -9,8 +9,8 @@ namespace ReqResponse.Command.Services
 {
     public class ProcessLocalTestRequestService 
     {
-        private readonly ITestRequestServiceClient _serviceClient;
-        public ProcessLocalTestRequestService(ITestRequestServiceClient serviceClient)
+        private readonly ITestModelRequestServiceClient _serviceClient;
+        public ProcessLocalTestRequestService(ITestModelRequestServiceClient serviceClient)
         {
             _serviceClient = serviceClient;
         }
@@ -19,7 +19,7 @@ namespace ReqResponse.Command.Services
         {
             Console.WriteLine($"Processing Local Test Request Service {Parameters.Test} DoEmail {Parameters.DoEmail}");
 
-            List<TestResponse> list = await _serviceClient.LoadLocalTestResponseAsync();
+             var model = await _serviceClient.LoadLocalTestResponseAsync();
             
 
             return true;

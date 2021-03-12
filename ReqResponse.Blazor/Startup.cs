@@ -12,6 +12,8 @@ using ReqResponse.Models;
 using ReqResponse.Services.Email;
 using ReqResponse.Services.XmlAPI;
 using ReqResponse.Services;
+using ReqResponse.Middleware.Services.Client;
+using ReqResponse.Support;
 
 namespace ReqResponse.Blazor
 {
@@ -20,6 +22,7 @@ namespace ReqResponse.Blazor
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
+            ConfigFactory.SetConfiguration(Configuration);
         }
 
         public IConfiguration Configuration { get; }
@@ -31,10 +34,14 @@ namespace ReqResponse.Blazor
             services.AddRazorPages();
             services.AddServerSideBlazor();
 
-            var emailConfig = Configuration
-                         .GetSection("EmailConfiguration")
-                         .Get<EmailConfiguration>();
+            EmailConfiguration emailConfig;
+            ServerConfiguration serverConfig;
+            ConfigHelper.CreateConfigurations(Configuration,
+                                              out emailConfig,
+                                              out serverConfig);
+     
             services.AddSingleton(emailConfig);
+            services.AddSingleton(serverConfig);
 
             services.AddScoped<ISqlDataAccess, SqlDataAccess>();
             services.AddScoped<RequestSimDataService, RequestSimDataService>();
@@ -49,6 +56,8 @@ namespace ReqResponse.Blazor
             services.AddScoped<EmailService, EmailService>();
             services.AddScoped<IServiceFactory, ServiceFactory>();
             services.AddScoped<IRequestService, RequestService>();
+            services.AddScoped<ITestRequestServiceClient, TestRequestServiceClient>();
+            services.AddScoped<ITestModelRequestServiceClient, TestModelRequestServiceClient>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

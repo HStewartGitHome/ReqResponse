@@ -1,0 +1,59 @@
+﻿@page "/summary"
+
+@inject HttpClient Http
+
+
+@if (string.IsNullOrWhiteSpace(errorString) == false)
+{
+<div class="h2">@errorString</div> }
+else if (response is null)
+{
+<div class="h4">Loading...</div> }
+else
+{
+<table class="table table-striped">
+    <thead class="thead-dark">
+        <tr>
+            <th>Id</th>
+            <th>Request Option</th>
+            <td>Created</td>
+            <td>Time Executed</td>
+            <td>Response SetId</td>
+            <td>Successfull Count</td>
+            <td>Failed Count</td>
+            <th>Ok Count</th>
+            <th>Error Count</th>
+        </tr>
+    </thead>
+    <tbody>
+
+        <tr>
+            <th>@response.Id.ToString()</th>
+            <th>@response.RequestOption.ToString()</th>
+            <th>@response.Created.ToString()</th>
+            <th>@response.TimeExecuted.ToString()</th>
+            <th>@response.ResponseSetId.ToString()</th>
+            <th>@response.SuccessfullCount.ToString()</th>
+            <th>@response.FailedCount.ToString()</th>
+            <th>@response.OkCount.ToString()</th>
+            <th>@response.ErrorCount.ToString()</th>
+        </tr>
+    </tbody>
+</table>}
+
+@code { ResponseSummaryModel response = null;
+    string errorString = "";
+    TestViewModel model = null;
+
+    [Parameter]
+    public int ResponseSetId { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        string str = $"SummaryRequests?param=byid,{ResponseSetId}";
+        model = await Http.GetFromJsonAsync<TestViewModel>(str);
+        response = model.Summary;
+
+        errorString = model.ErrorString;
+    } 
+}

@@ -1,6 +1,8 @@
 ﻿@page "/emailreport"
 
-@inject ReqResponse.Middleware.Services.IRequestService service
+
+@inject ReqResponse.Middleware.Services.Client.ITestModelRequestServiceClient service
+
 @inject NavigationManager navigationManager
 
 @if (string.IsNullOrWhiteSpace(errorString) == false)
@@ -12,31 +14,33 @@ else if (report is null)
 else
 {
 
-    <h3>Email Report</h3>
-    <h2>Error Count             = @report.ErrorCount.ToString()</h2>
-    <h2>Error Set Count         = @report.ErrorSet.ToString()</h2>
-    <h2>Current Last Error Time = @report.CurrentLastErrorDateTime.ToString()</h2>
-    <h2>Last Error Time         = @report.LastErrorDateTime.ToString()</h2>
-    <h2>Created Time            = @report.Created.ToString()</h2>
+<h3>Email Report</h3>
+                <h2>Error Count             = @report.ErrorCount.ToString()</h2>
+                                <h2>Error Set Count         = @report.ErrorSet.ToString()</h2>
+                                                <h2>Current Last Error Time = @report.CurrentLastErrorDateTime.ToString()</h2>
+                                                                <h2>Last Error Time         = @report.LastErrorDateTime.ToString()</h2>
+                                                                                <h2>Created Time            = @report.Created.ToString()</h2>
 
-    @if (report.ErrorCount > 0)
-    {
-        <button class="btn btn-primary" type="button" @onclick="OnReport">@report.Message</button>}
-    }
+                                                                                                @if (report.ErrorCount > 0)
+                                                                                                {
+                                                                                <button class="btn btn-primary" type="button" @onclick="OnReport">@report.Message</button>}}
 
 @code { TestErrorReport report = null;
     string errorString = "";
+    TestViewModel model = null;
 
     protected override async Task OnInitializedAsync()
     {
         await Task.Yield();
-        report = await service.GetTestErrorReportAsync();
-        errorString = service.ErrorString;
+        model = await service.GetTestErrorReportAsync();
+        report = model.Report;
+        errorString = model.ErrorString;
 
     }
 
     private async Task OnReport()
     {
-        await service.EmailTestErrorReportAsync();
+        model = await service.EmailTestErrorReportAsync();
+        errorString = model.ErrorString;
         navigationManager.NavigateTo("/");
     } }

@@ -7,9 +7,9 @@ namespace ReqResponse.Command.Services
 {
     public class ProcessTestEmailService
     {
-        private readonly ITestRequestServiceClient _serviceClient;
+        private readonly ITestModelRequestServiceClient _serviceClient;
 
-        public ProcessTestEmailService(ITestRequestServiceClient serviceClient)
+        public ProcessTestEmailService(ITestModelRequestServiceClient serviceClient)
         {
             _serviceClient = serviceClient;
         }

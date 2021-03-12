@@ -21,6 +21,7 @@ namespace ReqResponse.Command.HostBuilders
                 services.AddSingleton<IServiceFactory, ServiceFactory>();
                 services.AddSingleton<IRequestService, RequestService>();
                 services.AddSingleton<ITestRequestServiceClient, TestRequestServiceClient>();
+                services.AddSingleton<ITestModelRequestServiceClient, TestModelRequestServiceClient>();
             });
 
             return host;

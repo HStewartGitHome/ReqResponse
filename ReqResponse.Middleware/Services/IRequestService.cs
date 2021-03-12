@@ -16,9 +16,6 @@ namespace ReqResponse.Middleware.Services
 
         bool IsNeedRequest();
 
-        event Action RefreshRequested;
-
-        void CallRequestRefresh();
 
         Task<List<TestResponse>> ProcessRequest(bool firstRequest,
                                                 Request_Option reqOption,

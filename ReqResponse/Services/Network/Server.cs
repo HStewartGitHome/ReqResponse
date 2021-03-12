@@ -15,7 +15,7 @@ namespace ReqResponse.Services.Network
             // https://docs.microsoft.com/en-us/dotnet/api/system.net.sockets.tcplistener?redirectedfrom=MSDN&view=netframework-4.7.2
             TcpListener server = null;
 
-            options = Factory.GetOptions();
+            options = ConfigFactory.GetOptions();
 
             try
             {
@@ -192,7 +192,7 @@ namespace ReqResponse.Services.Network
             public static void StopListener( TcpListener server )
                                                  
             {
-            Options options = Factory.GetOptions();
+            Options options = ConfigFactory.GetOptions();
 
     
             try

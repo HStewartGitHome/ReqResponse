@@ -22,9 +22,9 @@ namespace ReqResponse.Wpf.Views
         private async void OnLoaded(object sender, RoutedEventArgs e)
         {
             _model = (ErrorsViewModel)DataContext;
-            ITestRequestServiceClient service = TestRequesteServiceClientFactory.CreateService();
-            TestErrorReport report = await service.GetTestErrorReportAsync();
-            _model.SetErrorReport(report);
+            ITestModelRequestServiceClient service = TestModelRequestServiceClientFactory.CreateService();
+            var TestModel = await service.GetTestErrorReportAsync();
+            _model.SetErrorReport(TestModel.Report);
         }
 
 
@@ -32,7 +32,7 @@ namespace ReqResponse.Wpf.Views
         {
             if (MessageBox.Show("Do you wish to email Error Report?", "Error Report", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
             {
-                ITestRequestServiceClient service = TestRequesteServiceClientFactory.CreateService();
+                ITestModelRequestServiceClient service = TestModelRequestServiceClientFactory.CreateService();
                 await service.EmailTestErrorReportAsync();
             }
         }

@@ -15,7 +15,7 @@ namespace ReqResponse.Services
         {
             LastResult = Result_Options.Unknown;
             IsConnectedService = true;
-            PrivateOptions = Factory.GetOptions();
+            PrivateOptions = ConfigFactory.GetOptions();
         }
 
     
@@ -52,10 +52,13 @@ namespace ReqResponse.Services
 
        
 
-        public override async Task<bool> Connnect()
+        public override async Task<bool> Connnect(string hostName,
+                                                  int port)
         {
+            PrivateOptions.HostName = hostName;
+            PrivateOptions.Port = port;
             string host = PrivateOptions.HostName;
-            int port = PrivateOptions.Port;
+           
 
             if (PrivateOptions.DebugOption == Debug_Option.NetworkClientDataConsole)
                 Console.WriteLine($"Client {DateTime.Now} connecting to Host: {host} on Port: {port}");

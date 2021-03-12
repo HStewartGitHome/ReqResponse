@@ -9,9 +9,9 @@ namespace ReqResponse.Command.Services
 {
     public class ProcessConnectedTestRequestService
     {
-        private readonly ITestRequestServiceClient _serviceClient;
+        private readonly ITestModelRequestServiceClient _serviceClient;
 
-        public ProcessConnectedTestRequestService(ITestRequestServiceClient serviceClient)
+        public ProcessConnectedTestRequestService(ITestModelRequestServiceClient serviceClient)
         {
             _serviceClient = serviceClient;
         }
@@ -20,12 +20,12 @@ namespace ReqResponse.Command.Services
         {
             Console.WriteLine($"Processing Connected Test Request Service {Parameters.Test} DoEmail {Parameters.DoEmail}");
 
-            List<TestResponse> list = await _serviceClient.LoadConnectedTestResponseAsync(true);
-            while (_serviceClient.IsNeedRequest() == true)
+            var model = await _serviceClient.LoadConnectedTestResponseAsync(true);
+            while (model.IsNeedRequest() == true)
             {
-                list = await _serviceClient.LoadConnectedTestResponseAsync(false);
+                model = await _serviceClient.LoadConnectedTestResponseAsync(false);
             }
-            _serviceClient.Reset(true);
+            await _serviceClient.ResetAsync(true);
 
             return true;
         }

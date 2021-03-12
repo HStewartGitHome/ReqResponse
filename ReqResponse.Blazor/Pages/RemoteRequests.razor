@@ -1,118 +1,112 @@
 ﻿@page "/remoterequests"
+@implements IAsyncDisposable
 
 
-@inject ReqResponse.Middleware.Services.IRequestService service
+@inject ReqResponse.Middleware.Services.Client.ITestModelRequestServiceClient service
+
 
 @if (string.IsNullOrWhiteSpace(messageString) == false)
 {
-    <h3>Remote Requests @messageString</h3>
-}
-else
-{
-    <h3>Remote Requests Started</h3>
-}
-
+<h3>Remote Requests @messageString</h3> }
+            else
+            {
+<h3>Remote Requests Started</h3>}
 @if (string.IsNullOrWhiteSpace(errorString) == false)
 {
-    <div class="h2">@errorString</div>
-}
-else if (responses is null)
-{
-    <div class="h4">Loading...</div>
-}
-else
-{
-    <table class="table table-striped">
-        <thead class="thead-dark">
+<div class="h2">@errorString</div> }
+            else if (responses is null)
+            {
+<div class="h4">Loading...</div> }
+            else
+            {
+<table class="table table-striped">
+    <thead class="thead-dark">
+        <tr>
+            <th>Id</th>
+            <th>Request Option</th>
+            <td>Created</td>
+            <td>Time Executed</td>
+            <td>Success</td>
+            <td>Response SetId</td>
+            <td>Request Id</td>
+            <th>Method</th>
+            <th>Value1</th>
+            <th>Value2</th>
+            <th>Value</th>
+            <th>Actual Value</th>
+            <th>Expected Result</th>
+            <th>Actual Result</th>
+        </tr>
+    </thead>
+    <tbody>
+        <Virtualize Items="responses" Context="response">
             <tr>
-                <th>Id</th>
-                <th>Request Option</th>
-                <td>Created</td>
-                <td>Time Executed</td>
-                <td>Success</td>
-                <td>Response SetId</td>
-                <td>Request Id</td>
-                <th>Method</th>
-                <th>Value1</th>
-                <th>Value2</th>
-                <th>Value</th>
-                <th>Actual Value</th>
-                <th>Expected Result</th>
-                <th>Actual Result</th>
+                <th>@response.Id.ToString()</th>
+                <th>@response.RequestOption.ToString()</th>
+                <th>@response.Created.ToString()</th>
+                <th>@response.TimeExecuted.ToString()</th>
+                <th>@response.Success.ToString()</th>
+                <th>@response.ResponseSetId.ToString()</th>
+                <th>@response.Request.Id.ToString()</th>
+                <th>@response.Request.Method</th>
+                <th>@response.Request.Value1</th>
+                <th>@response.Request.Value2</th>
+                <th>@response.ActualValue</th>
+                <th>@response.Request.ExpectedValue</th>
+                <th>@response.Request.ExpectedResult.ToString()</th>
+                <th>@response.ActualResult.ToString()</th>
             </tr>
-        </thead>
-        <tbody>
-            <Virtualize Items="responses" Context="response">
-                <tr>
-                    <th>@response.Id.ToString()</th>
-                    <th>@response.RequestOption.ToString()</th>
-                    <th>@response.Created.ToString()</th>
-                    <th>@response.TimeExecuted.ToString()</th>
-                    <th>@response.Success.ToString()</th>
-                    <th>@response.ResponseSetId.ToString()</th>
-                    <th>@response.Request.Id.ToString()</th>
-                    <th>@response.Request.Method</th>
-                    <th>@response.Request.Value1</th>
-                    <th>@response.Request.Value2</th>
-                    <th>@response.ActualValue</th>
-                    <th>@response.Request.ExpectedValue</th>
-                    <th>@response.Request.ExpectedResult.ToString()</th>
-                    <th>@response.ActualResult.ToString()</th>
-                </tr>
-            </Virtualize>
-        </tbody>
-    </table>
-}
+        </Virtualize>
+    </tbody>
+</table>}
 
-@code {
-        List<TestResponse> responses = null;
-        string errorString = "";
-        string messageString = "";
+@code { List<TestResponse> responses = null;
+    string errorString = "";
+    string messageString = "";
+    TestViewModel model = null;
+    TestViewModel model2 = null;
+    int MaxRequests;
+    static bool working = true;
 
     protected override async Task OnInitializedAsync()
     {
-        bool working = true;
         await Task.Yield();
-        responses = await service.ProcessRequest(true, Request_Option.Connected, 9999);
-        errorString = service.ErrorString;
-        service.RefreshRequested += RefreshMe;
 
-        MakeMessageString(!service.IsNeedRequest());
+        model = await service.LoadRemoteTestResponseAsync(true);
+        responses = model.Responses;
+        errorString = model.ErrorString;
+        MaxRequests = model.MaxRequests;
 
+        MakeMessageString(!model.IsNeedRequest());
+        StateHasChanged();
+        await Task.Delay(200);
+
+        // Need a better way to handle this
+        working = true;
         while (working)
         {
-            working = service.IsNeedRequest();
-            await UpdateResponseAsync();
-            errorString = service.ErrorString;
-        }
-        service.Reset(true);
-    }
-
-    public async Task UpdateResponseAsync()
-    {
-        if (service.IsNeedRequest())
-        {
             await Task.Yield();
-            List<TestResponse> newResponses = await service.ProcessRequest(false, Request_Option.Connected, 9999);
-            foreach (TestResponse resp in newResponses)
-                responses.Add(resp);
+            model2 = await service.LoadRemoteTestResponseAsync(false);
+            model.AddResponses(model2.Responses);
 
-            MakeMessageString(false);
-             await Task.Delay(500);
-        }
-        else
-        {
-            MakeMessageString(true);
-            await Task.Yield();
+            responses = model.Responses;
+            errorString = model.ErrorString;
+            if (working)
+                working = model.IsNeedRequest();
+            MakeMessageString(!working);
             StateHasChanged();
-
+            await Task.Delay(200);
         }
+        model2 = await service.ResetAsync(true);
+        errorString = model2.ErrorString;
     }
+
+
 
     private void MakeMessageString(bool finish)
     {
         int count = responses.Count;
-        int max = service.MaxRequests;
+        int max = model.MaxRequests;
         if (count > max)
             max = count;
 
@@ -122,9 +116,15 @@ else
             messageString = "Processing " + count.ToString() + " of " + max.ToString() + " Requests";
 
     }
-
-    private void RefreshMe()
+    public void Dispose()
     {
-        StateHasChanged();
+        working = false;
     }
-}
+
+    public async ValueTask DisposeAsync()
+    {
+        working = false;
+        var model = await service.ResetAsync(true);
+    }
+
+    }
